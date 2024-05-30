@@ -1,0 +1,21 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.main-header {
+  flex: 0 0 255px;
+  width: 255px;
+  height: 100vh;
+  border-right: 1px solid #ddd;
+}
+
+.main-content {
+  width: 100%;
+}
+
+.main-side {
+  flex: 0 0 360px;
+  width: 360px;
+  height: 100vh;
+}
