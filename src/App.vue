@@ -3,7 +3,6 @@
     <TheMainHeader />
     <TheMainView />
     <TheMainSide />
-    <v-btn color="primary">Click Me</v-btn>
   </div>
   <TheFooter />
 </template>
