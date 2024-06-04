@@ -1,7 +1,27 @@
 <template>
-  <div class="main-header">
-    <h1>Header Section</h1>
-  </div>
+  <v-col cols="3" class="position-fixed top-0 bottom-0">
+    <v-sheet class="d-flex flex-column align-center py-10" height="100%">
+      <h1 class="text-h3">Time Capsule</h1>
+      <p class="text-subtitle-1 text-weight-bold mt-2">할 일을 기록하다.</p>
+      <v-divider vertical="" class="mx-auto my-5"></v-divider>
+      <div class="todo-time__area">
+        <v-img :width="48" :height="48" src="/assets/images/ico-time.png"></v-img>
+        <span class="time mt-3">05/28/2024</span>
+        <span class="date">12:13:16</span>
+      </div>
+      <v-divider vertical="" class="mx-auto my-5"></v-divider>
+      <v-card>
+        <v-list>
+          <v-list-item>
+            할 일
+          </v-list-item>
+          <v-list-item>
+            완 료
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-sheet>
+  </v-col>  
 </template>
 
 <script setup>
@@ -9,7 +29,16 @@
 </script>
 
 <style lang="scss" scoped>
-  h1 {
-    color: $color-primary
+  .todo-time__area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .time {
+      font-size: 1.5rem;
+    }
+    .date {
+      font-size: 3.5rem;
+    }
   }
 </style>

@@ -1,10 +1,16 @@
 <template>
-  <div class="main-container">
-    <TheMainHeader />
-    <TheMainView />
-    <TheMainSide />
-  </div>
-  <TheFooter />
+  <v-container fluid class="pa-0">
+    <v-row no-gutters cols="12">
+      <TheMainHeader class="main-header" />      
+      <TheMainView class="main-content" />
+      <TheMainSide />
+    </v-row>
+    <!-- <v-row>
+      <v-col>
+        <TheFooter />
+      </v-col>
+    </v-row> -->
+  </v-container>
 </template>
 
 <script setup>

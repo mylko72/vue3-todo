@@ -1,7 +1,9 @@
 <template>
-  <div class="main-side">
-    <h1>Side Section</h1>
-  </div>
+  <v-col cols="4">    
+    <div class="main-side">
+      <h1>Side Section</h1>
+    </div>
+  </v-col>  
 </template>
 
 <script setup>

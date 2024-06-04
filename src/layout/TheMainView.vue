@@ -1,7 +1,9 @@
 <template>
-  <div class="main-content">
-    <h1>View Section</h1>
-  </div>
+  <v-col cols="5" offset="3">    
+    <div class="main-content">
+      <h1>View Section</h1>
+    </div>
+  </v-col>  
 </template>
 
 <script setup>
