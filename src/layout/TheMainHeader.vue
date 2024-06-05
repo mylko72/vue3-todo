@@ -24,6 +24,17 @@
           </v-list-item>
         </v-list>
       </v-card>
+      <v-divider></v-divider>
+      <v-container>
+        <v-row class="my-20" justify="center">
+          <v-col cols="4">
+            <v-btn outlined>저장</v-btn>
+          </v-col>
+          <v-col cols="4">
+            <v-btn>취소</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-sheet>
   </v-col>  
 </template>
