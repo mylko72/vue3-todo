@@ -25,16 +25,10 @@
         </v-list>
       </v-card>
       <v-divider></v-divider>
-      <v-container>
-        <v-row class="my-20" justify="center">
-          <v-col cols="4">
-            <v-btn outlined>저장</v-btn>
-          </v-col>
-          <v-col cols="4">
-            <v-btn>취소</v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
+      <div class="todo-btn__area mt-10">
+        <v-btn size="large" outlined color="indigo-darken-3">저장</v-btn>
+        <v-btn size="large" color="grey-lighten-2">취소</v-btn>
+      </div>
     </v-sheet>
   </v-col>  
 </template>
@@ -61,5 +55,13 @@
   }
   .todo-list__bx {
     flex: 0 0 80px;
+  }
+  .todo-btn__area {
+    display: inline-flex;
+    justify-content: space-between;
+
+    button {
+      margin: 0 10px;
+    }
   }
 </style>
