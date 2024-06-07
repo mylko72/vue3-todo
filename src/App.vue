@@ -21,7 +21,5 @@ import TheFooter from '@/layout/TheFooter.vue'
 </script>
 
 <style lang="scss" scoped>
-.main-container {
-  display: flex;
-}
+
 </style>
