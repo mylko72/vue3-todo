@@ -4,7 +4,7 @@
       <h1 class="text-h3">Time Capsule</h1>
       <p class="text-subtitle-1 text-weight-bold mt-2">할 일을 기록하다.</p>
       <v-divider vertical="" class="mx-auto mb-5"></v-divider>
-      <currentTime></currentTime>
+      <TimeView></TimeView>
       <!-- <div class="todo-time__area">
         <v-img :width="48" :height="48" src="/assets/images/ico-time.png"></v-img>
         <span class="time mt-3">05/28/2024</span>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import currentTime from '@/components/currentTime.vue'
+import TimeView from '@/views/TimeView.vue'
 </script>
 
 <style lang="scss" scoped>
