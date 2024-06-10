@@ -1,17 +1,33 @@
 <template>
   <v-col cols="5">
-    <GridView></GridView>
+    <div class="todo-current__date">
+      <v-row no-gutters justify-sm="center">
+        <h2 class="text-h4 py-10">{{ dateString }}</h2>
+      </v-row>
+    </div>
+    <ToDoTimeGrid class="mt-5"></ToDoTimeGrid>
   </v-col>  
 </template>
 
 <script setup>
-import GridView from '@/views/GridView.vue'
+import ToDoTimeGrid from '@/views/ToDoTimeGrid.vue';
+import { useClock } from '@/composables/useClock';
 
+const { dateString } = useClock();
 </script>
 
 <style lang="scss" scoped>
-  h1 {
-    color:n $color-secondary
+  .todo-current__date {
+    position:sticky;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    background-color: #fff;
+
+    h2 {
+      font-weight: 700;
+      color: $color-primary;
+    }
   }
   .main-content {
     margin-left: 320px;
