@@ -28,7 +28,7 @@ const props = defineProps({
 const day = 24;
 // 그리드의 기본단위는 5분(minute)이며 1분은 2px이다.
 const timeLineGrid = ref({
-  oneMinute: props.unit,
+  oneMinute: '',
   fiveMinute: 0,
   currentTime: null,
   currentScollY: 0,
@@ -39,6 +39,7 @@ const calcHeight = computed(() => {
 });
 
 const gridHeight = computed(() => {
+  timeLineGrid.value.oneMinute = props.unit;
   return parseFloat(timeLineGrid.value.oneMinute) * 5;
 });
 

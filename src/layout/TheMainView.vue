@@ -7,7 +7,7 @@
       <v-row justify-sm="end">
         <v-col cols="5">
           <v-select
-            v-model="select"
+            v-model="selectedView"
             :items="selectItems" 
             item-title="view"
             item-value="unit"
@@ -17,7 +17,7 @@
         </v-col>
       </v-row>
     </div>
-    <ToDoTimeGrid class="mt-5" :unit="select.unit"></ToDoTimeGrid>
+    <ToDoTimeGrid class="mt-5" :unit="selectedView"></ToDoTimeGrid>
   </v-col>  
 </template>
 
@@ -33,9 +33,9 @@ const selectItems = ref([
   {view: '2x', unit: '4px'},
   {view: '3x', unit: '6px'},
 ]);
-const select = ref(
-  selectItems.value[0]
-);
+
+const selectedView = ref(selectItems.value[0].unit);
+
 </script>
 
 <style lang="scss" scoped>
