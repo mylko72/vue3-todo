@@ -10,6 +10,7 @@
         </li>
       </ul>
     </div>
+    <div class="todo-timeline__bar"></div>
   </div>
 </template>
 
@@ -105,6 +106,19 @@ onMounted(() => {
           border-bottom-color: #000;
         }
       }    
+    }
+
+    .todo-timeline__bar {
+      position: absolute;
+      left: 200px; 
+      top: 100px;
+      width: 50px;
+      height: 200px;
+      background: #7749F8;
+      box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
+      border-radius: 5px;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 1px rgba(0,0,0,.1);      
     }
   }
 </style>
