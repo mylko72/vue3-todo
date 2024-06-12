@@ -4,7 +4,7 @@
       <v-row no-gutters align-sm="center" justify-sm="center">
         <v-col cols="9">
           <v-row no-gutters="">
-            <v-btn class="todo-btn__left" variant="plain">
+            <v-btn class="todo-btn__left" height="39" variant="plain">
               <v-icon icon="arrow_circle_left"></v-icon>
             </v-btn>
             <h2 class="text-h4">{{ dateString }}</h2>
@@ -60,6 +60,7 @@ const selectedView = ref(selectItems.value[0].unit);
     h2 {
       font-weight: 700;
       color: $color-primary;
+      line-height: 36px;
     }
   }
 

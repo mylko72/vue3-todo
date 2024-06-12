@@ -58,9 +58,21 @@ const clickTimeline = ($event) => {
   
   timelineData.value.startPoint = $event.pageY - startScrollY;
   if(timelineData.value.startPoint){
-    timelineData.value.created = true;
-    timelineBar.value.push(timelineData);
+    timelineData.value.created = true;    
+    timelineBar.value.push({...timelineData});
   }
+};
+
+const clickTimeline2 = ($event) => {    
+  const { startScrollY } = timeLineGrid.value;
+
+  timelineBar.value.push(timelineData);
+
+  const index = timelineBar.value.length - 1;
+  timelineBar.value[index].startPoint = $event.pageY - startScrollY;
+  timelineBar.value[index].created = true;
+
+  console.log(timelineBar.value[index].startPoint)
 };
 
 const timeHeight = computed(() => {
