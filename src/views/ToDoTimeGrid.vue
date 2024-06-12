@@ -1,16 +1,16 @@
 <template>
-  <div class="todo-time__sheet" ref="timeSheetRef">
-    <div class="todo-time__grid">
-      <div class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
+  <div class="todo-time__sheet">
+    <div class="todo-time__grid" ref="timeLineGridRef">
+      <div @click="clickTimeline($event)" class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
     </div>
     <div class="todo-time__list">
       <ul>
-        <li v-for="i in day" :key="i" ref="timeListRef" :style="{ height: calcHeight + 'px' }">
+        <li v-for="i in day" :key="i" :style="{ height: timeHeight + 'px' }">
           <span class='time'>{{ setTimeList(i) }}</span>
         </li>
       </ul>
     </div>
-    <div class="todo-timeline__bar"></div>
+    <div class="todo-timeline__bar" :class="{'active': timelineData.created}" v-for="n in timelineBar"></div>
   </div>
 </template>
 
@@ -26,6 +26,8 @@ const props = defineProps({
   }
 })
 
+const timeLineGridRef = ref(null);
+
 const day = 24;
 // 그리드의 기본단위는 5분(minute)이며 1분은 2px이다.
 const timeLineGrid = ref({
@@ -33,9 +35,35 @@ const timeLineGrid = ref({
   fiveMinute: 0,
   currentTime: null,
   currentScollY: 0,
-})
+  startScrollY: 0
+});
 
-const calcHeight = computed(() => {
+const timelineBar = ref([]);
+
+const timelineData = ref({
+  id: '',
+  theDate : '',
+  startTime: '',
+  endTime: '',
+  startPoint: 0,
+  endPoint: 0,
+  title: '',
+  content: '',
+  complete: false,
+  created: false
+});
+
+const clickTimeline = ($event) => {
+  const { startScrollY } = timeLineGrid.value;
+  
+  timelineData.value.startPoint = $event.pageY - startScrollY;
+  if(timelineData.value.startPoint){
+    timelineData.value.created = true;
+    timelineBar.value.push(timelineData);
+  }
+};
+
+const timeHeight = computed(() => {
   return calcToPx();
 });
 
@@ -51,6 +79,12 @@ const getTotalGrid = computed(() => {
 const setTimeList = (i) => {
     const idx = i - 1;
     return `${(idx < 10 ? "0": "") + idx}:00`;
+};
+
+const initTimeline = () => {
+  setCurrentTime();
+  
+  timeLineGrid.value.startScrollY = timeLineGridRef.value.getBoundingClientRect().top + window.scrollY;
 };
 
 //현재 시간 가져오기
@@ -72,7 +106,7 @@ const calcToPx = () => {
 }
 
 onMounted(() => {
-  setCurrentTime();
+  initTimeline();
 })
 
 </script>
@@ -109,6 +143,7 @@ onMounted(() => {
     }
 
     .todo-timeline__bar {
+      display: none;
       position: absolute;
       left: 200px; 
       top: 100px;
@@ -118,7 +153,11 @@ onMounted(() => {
       box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
       border-radius: 5px;
       margin-bottom: 20px;
-      text-shadow: 1px 1px 1px rgba(0,0,0,.1);      
+      text-shadow: 1px 1px 1px rgba(0,0,0,.1);    
+      
+      &.active {
+        display: block;
+      }
     }
   }
 </style>
