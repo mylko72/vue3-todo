@@ -10,13 +10,17 @@
         </li>
       </ul>
     </div>
-    <div class="todo-timeline__bar" :class="{'active': timelineData.created}" v-for="n in timelineBar"></div>
+    <template v-for="bar in timelineBar">
+      <div class="todo-timeline__bar" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.range + 'px' }"></div>
+    </template>
   </div>
 </template>
 
 <script setup>
 import { computed, ref, defineProps } from 'vue';
 import { onMounted, onUnmounted } from 'vue';
+
+let counter = 0;
 
 const props = defineProps({
   unit: {
@@ -47,6 +51,7 @@ const timelineData = ref({
   endTime: '',
   startPoint: 0,
   endPoint: 0,
+  range: 0,
   title: '',
   content: '',
   complete: false,
@@ -55,24 +60,22 @@ const timelineData = ref({
 
 const clickTimeline = ($event) => {
   const { startScrollY } = timeLineGrid.value;
-  
-  timelineData.value.startPoint = $event.pageY - startScrollY;
-  if(timelineData.value.startPoint){
-    timelineData.value.created = true;    
-    timelineBar.value.push({...timelineData});
+
+  if(!timelineData.value.created){
+    counter++;
+    timelineData.value.created = true;
+    timelineData.value.id = `bar-${counter}`;
+    const cloneData = {...timelineData.value};
+    timelineBar.value.push(cloneData);
   }
-};
 
-const clickTimeline2 = ($event) => {    
-  const { startScrollY } = timeLineGrid.value;
-
-  timelineBar.value.push(timelineData);
-
-  const index = timelineBar.value.length - 1;
-  timelineBar.value[index].startPoint = $event.pageY - startScrollY;
-  timelineBar.value[index].created = true;
-
-  console.log(timelineBar.value[index].startPoint)
+  if(!timelineBar.value[timelineBar.value.length-1].startPoint){
+    timelineBar.value[timelineBar.value.length-1].startPoint = $event.pageY - timeLineGrid.value.startScrollY;
+  }else{
+    timelineBar.value[timelineBar.value.length-1].endPoint = $event.pageY - timeLineGrid.value.startScrollY;
+    timelineBar.value[timelineBar.value.length-1].range = timelineBar.value[timelineBar.value.length-1].endPoint - timelineBar.value[counter-1].startPoint;
+    timelineData.value.created = false;
+  }    
 };
 
 const timeHeight = computed(() => {
@@ -160,11 +163,10 @@ onMounted(() => {
       left: 200px; 
       top: 100px;
       width: 50px;
-      height: 200px;
+      // height: 200px;
       background: #7749F8;
       box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
       border-radius: 5px;
-      margin-bottom: 20px;
       text-shadow: 1px 1px 1px rgba(0,0,0,.1);    
       
       &.active {
