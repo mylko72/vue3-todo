@@ -27,7 +27,7 @@
         </v-col>
       </v-row>
     </div>
-    <ToDoTimeGrid class="mt-5" :unit="selectedView"></ToDoTimeGrid>
+    <ToDoTimeGrid class="mt-5" :unit="selectedView" :date="dateString"></ToDoTimeGrid>
   </v-col>  
 </template>
 

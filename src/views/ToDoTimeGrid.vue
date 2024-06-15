@@ -1,7 +1,8 @@
 <template>
   <div class="todo-time__sheet">
-    <div class="todo-time__grid" ref="timeLineGridRef">
-      <div @click="createTimelineBar($event)" @mousemove="drawTimelineBar($event)" class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
+    {{ absX }}, {{ absY }}
+    <div @click="createTimelineBar($event)" @mousemove="drawTimelineBar($event)" class="todo-time__grid" ref="timeLineGridRef">
+      <div class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
     </div>
     <div class="todo-time__list">
       <ul>
@@ -13,6 +14,9 @@
     <template v-for="bar in timelineBar">
       <div class="todo-timeline__bar" :id="'bar_'+bar.id" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.timeRange + 'px' }"></div>
     </template>
+    <Teleport to="body">
+			<AppTooltip :isHover="anchorHover" :left="absX" :top="absY" :direction="anchorDirection" :message="anchorMessage" />
+		</Teleport>    
   </div>
 </template>
 
@@ -20,11 +24,18 @@
 import { computed, ref, defineProps } from 'vue';
 import { onMounted, onUnmounted } from 'vue';
 import { inject } from 'vue';
+import { useMouse } from '@/composables/useMouse';
+import { useTooltip } from '@/composables/useTooltip';
+import AppTooltip from '@/components/app/AppTooltip.vue'
 
 const props = defineProps({
   unit: {
     type: String,
     default: '2px',
+    required: true
+  },
+  date: {
+    type: String,
     required: true
   }
 })
@@ -32,6 +43,14 @@ const props = defineProps({
 const util = inject('util');
 
 const timeLineGridRef = ref(null);
+const { x: absX, y: absY } = useMouse(); 
+const { anchorTop, anchorLeft, anchorDirection, anchorMessage, anchorHover } = useTooltip(
+	{
+    'anchor': timeLineGridRef, 
+    'direction': 'top', 
+    'message': '할 일을 등록하기 위해\n 시작시간을 선택하세요'
+  }
+);
 
 const day = 24;
 // 그리드의 기본단위는 5분(minute)이며 1분은 2px이다.
@@ -48,8 +67,8 @@ const timelineBar = ref([]);
 const timelineData = ref({
   id: '',
   theDate : '',
-  startTime: '',
-  endTime: '',
+  startTime: {hour: 0, minute: 0},
+  endTime:  {hour: 0, minute: 0},
   startPoint: 0,
   endPoint: 0,
   timeRange: 0,
@@ -64,20 +83,39 @@ const createTimelineBar = ($event) => {
 
   if(!timelineData.value.created){
     timelineData.value.created = true;
-    timelineBar.value.push({...timelineData.value});
+    const cloneData = deepCopy(timelineData.value);
+    timelineBar.value.push(cloneData);
   }
 
   const newIdx = timelineBar.value.length-1;
+  timelineBar.value[newIdx].id = util.randomKey();
+  timelineBar.value[newIdx].theDate = props.date;
+
   if(!timelineBar.value[newIdx].startPoint){
-    timelineBar.value[newIdx].id = util.randomKey();
     timelineBar.value[newIdx].startPoint = $event.pageY - startScrollY;
-    timelineBar.value[newIdx].startTime = getTime(timelineBar.value[newIdx].startPoint);
+
+    const { hour, minute} = getTime(timelineBar.value[newIdx].startPoint);
+    timelineBar.value[newIdx].startTime.hour = hour;
+    timelineBar.value[newIdx].startTime.minute = minute;
   }else{
     timelineBar.value[newIdx].endPoint = $event.pageY - startScrollY;
-    timelineBar.value[newIdx].endTime = getTime(timelineBar.value[newIdx].endPoint);
+    console.log('endPoint', timelineBar.value[newIdx].endPoint);
+    
+    const { hour, minute} = getTime(timelineBar.value[newIdx].endPoint);
+    timelineBar.value[newIdx].endTime.hour = hour;
+    timelineBar.value[newIdx].endTime.minute = minute;
+
     timelineData.value.created = false;
   }    
 };
+
+function deepCopy(obj) {
+  var result = {};
+  if (typeof obj === "object" && obj !== null)
+    for (let i in obj) result[i] = deepCopy(obj[i]);
+  else result = obj;
+  return result;
+}
 
 const drawTimelineBar = ($event) => {
   if(!timelineData.value.created) return false;
@@ -96,11 +134,14 @@ const getTime = (value) => {
   let hour = Math.floor(result);
   let minute = util.getOnlyDecimal(result, 2);
 
-  hour = hour < 10 ? `0${hour}`: hour;
+  hour = hour < 10 ? `0${hour}`: `${hour}`;
   minute = Math.floor(minute*timeHeight / parseFloat(timeLineGrid.value.oneMinute));
-  minute = minute < 10 ? `0${minute}`: minute;
+  minute = minute < 10 ? `0${minute}`: `${minute}`;
 
-  return `${hour}:${minute}`;
+  return {
+    hour,
+    minute
+  }
 }
 
 const timeHeight = computed(() => {
