@@ -1,7 +1,7 @@
 <template>
   <div class="todo-time__sheet">
     <div class="todo-time__grid" ref="timeLineGridRef">
-      <div @click="clickTimeline($event)" class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
+      <div @click="createTimelineBar($event)" @mousemove="drawTimelineBar($event)" class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
     </div>
     <div class="todo-time__list">
       <ul>
@@ -11,7 +11,7 @@
       </ul>
     </div>
     <template v-for="bar in timelineBar">
-      <div class="todo-timeline__bar" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.range + 'px' }"></div>
+      <div class="todo-timeline__bar" :id="'bar_'+bar.id" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.timeRange + 'px' }"></div>
     </template>
   </div>
 </template>
@@ -19,8 +19,7 @@
 <script setup>
 import { computed, ref, defineProps } from 'vue';
 import { onMounted, onUnmounted } from 'vue';
-
-let counter = 0;
+import { inject } from 'vue';
 
 const props = defineProps({
   unit: {
@@ -29,6 +28,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const util = inject('util');
 
 const timeLineGridRef = ref(null);
 
@@ -51,32 +52,56 @@ const timelineData = ref({
   endTime: '',
   startPoint: 0,
   endPoint: 0,
-  range: 0,
+  timeRange: 0,
   title: '',
   content: '',
   complete: false,
   created: false
 });
 
-const clickTimeline = ($event) => {
+const createTimelineBar = ($event) => {
   const { startScrollY } = timeLineGrid.value;
 
   if(!timelineData.value.created){
-    counter++;
     timelineData.value.created = true;
-    timelineData.value.id = `bar-${counter}`;
-    const cloneData = {...timelineData.value};
-    timelineBar.value.push(cloneData);
+    timelineBar.value.push({...timelineData.value});
   }
 
-  if(!timelineBar.value[timelineBar.value.length-1].startPoint){
-    timelineBar.value[timelineBar.value.length-1].startPoint = $event.pageY - timeLineGrid.value.startScrollY;
+  const newIdx = timelineBar.value.length-1;
+  if(!timelineBar.value[newIdx].startPoint){
+    timelineBar.value[newIdx].id = util.randomKey();
+    timelineBar.value[newIdx].startPoint = $event.pageY - startScrollY;
+    timelineBar.value[newIdx].startTime = getTime(timelineBar.value[newIdx].startPoint);
   }else{
-    timelineBar.value[timelineBar.value.length-1].endPoint = $event.pageY - timeLineGrid.value.startScrollY;
-    timelineBar.value[timelineBar.value.length-1].range = timelineBar.value[timelineBar.value.length-1].endPoint - timelineBar.value[counter-1].startPoint;
+    timelineBar.value[newIdx].endPoint = $event.pageY - startScrollY;
+    timelineBar.value[newIdx].endTime = getTime(timelineBar.value[newIdx].endPoint);
     timelineData.value.created = false;
   }    
 };
+
+const drawTimelineBar = ($event) => {
+  if(!timelineData.value.created) return false;
+
+  const newIdx = timelineBar.value.length-1;
+  timelineBar.value[newIdx].timeRange = updatePositionY($event) - timelineBar.value[newIdx].startPoint;
+}
+
+const updatePositionY = (event) => {
+  return event.pageY - timeLineGrid.value.startScrollY
+}
+
+const getTime = (value) => {
+  let timeHeight = calcToPx();
+  let result = value / timeHeight;
+  let hour = Math.floor(result);
+  let minute = util.getOnlyDecimal(result, 2);
+
+  hour = hour < 10 ? `0${hour}`: hour;
+  minute = Math.floor(minute*timeHeight / parseFloat(timeLineGrid.value.oneMinute));
+  minute = minute < 10 ? `0${minute}`: minute;
+
+  return `${hour}:${minute}`;
+}
 
 const timeHeight = computed(() => {
   return calcToPx();
@@ -160,7 +185,7 @@ onMounted(() => {
     .todo-timeline__bar {
       display: none;
       position: absolute;
-      left: 200px; 
+      left: 150px; 
       top: 100px;
       width: 50px;
       // height: 200px;
