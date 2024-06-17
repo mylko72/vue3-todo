@@ -1,6 +1,6 @@
 <template>
   <div @click="createTimelineBar($event)" @mousemove="drawTimelineBar($event)" class="todo-time__grid" ref="timeLineGridRef">
-    <div class="time-grid" v-for="n in props.totalGrid" :style="{ height: props.height + 'px' }"></div>
+    <div class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
 
     <template v-for="bar in timelineBar">
         <div class="todo-timeline__bar" :id="'bar_'+bar.id" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.timeRange + 'px' }"></div>
@@ -9,20 +9,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { inject, onMounted } from 'vue';
 import { useMouse } from '@/composables/useMouse';
 
 const props = defineProps({
-  totalGrid: Number,
-  height: Number,
-  grid: Object
-})
+  unit: [String, Number],
+  today: String,
+});
+
+const emit = defineEmits(['initGrid', 'showMessage', 'setPosMessage']);
 
 const util = inject('util');
 const { x: absX, y: absY } = useMouse(); 
 const timeLineGridRef = ref(null);
 
+const day = 24;
+// 그리드의 기본단위는 5분(minute)이며 1분은 2px이다.
+const timeLineGrid = ref({
+  oneMinute: '',
+  fiveMinute: 0,
+  currentTime: null,
+  currentScollY: 0,
+  startScrollY: 0
+});
 const timelineBar = ref([]);
 const timelineData = ref({
   id: '',
@@ -38,8 +48,39 @@ const timelineData = ref({
   created: false
 });
 
+const timeHeight = computed(() => {
+  return calcToPx();
+});
+
+const gridHeight = computed(() => {
+  timeLineGrid.value.oneMinute = props.unit;
+  return parseFloat(timeLineGrid.value.oneMinute) * 5;
+});
+
+const getTotalGrid = computed(() => {
+  return day * (60/5);
+});
+
+//현재 시간 가져오기
+const setCurrentTime = (fetchHour) => {
+  let now = new Date();			//현재 시간을 가져오기 위한 Date 오브젝트 생성;
+
+  timeLineGrid.value.currentTime = fetchHour ?? now.getHours();   // 서버에 저장된 시간(fetchHour)이 없다면 현재 시간을 timeLineGrid.value.currentTime에 저장       
+  timeLineGrid.value.currentScollY = timeLineGrid.value.currentTime * calcToPx();		// 현재 시간을 px(calcToPx 함수가 반환한 값)로 연산(곱)하여 현재 px값를 구한다.  
+
+  setTimeout(() => {
+    window.scrollTo(0, timeLineGrid.value.currentScollY);
+  }, 500);
+}
+
+// 60분을 px 단위로 변환
+const calcToPx = () => {
+  timeLineGrid.value.fiveMinute = gridHeight;   // 5분을 px로 연산
+  return (60 / 5) * timeLineGrid.value.fiveMinute;
+}
+
 const createTimelineBar = ($event) => {
-  const { startScrollY } = props.grid;
+  const { startScrollY } = timeLineGrid.value;
 
   if(!timelineData.value.created){
     timelineData.value.created = true;
@@ -49,7 +90,7 @@ const createTimelineBar = ($event) => {
 
   const newIdx = timelineBar.value.length-1;
   timelineBar.value[newIdx].id = util.randomKey();
-  timelineBar.value[newIdx].theDate = props.date;
+  timelineBar.value[newIdx].theDate = props.today;
 
   if(!timelineBar.value[newIdx].startPoint){
     timelineBar.value[newIdx].startPoint = $event.pageY - startScrollY;
@@ -58,7 +99,7 @@ const createTimelineBar = ($event) => {
     timelineBar.value[newIdx].startTime.hour = hour;
     timelineBar.value[newIdx].startTime.minute = minute;
 
-    messageGuide.value.message = '종료시간을 선택하세요';
+    emit('showMessage', '종료시간을 선택하세요');
   }else{
     timelineBar.value[newIdx].endPoint = $event.pageY - startScrollY;
     console.log('endPoint', timelineBar.value[newIdx].endPoint);
@@ -68,7 +109,7 @@ const createTimelineBar = ($event) => {
     timelineBar.value[newIdx].endTime.minute = minute;
 
     timelineData.value.created = false;
-    messageGuide.value.message = '시작시간을 선택하세요';
+    emit('showMessage', '시작시간을 선택하세요');
   }    
 };
 
@@ -80,7 +121,7 @@ const drawTimelineBar = ($event) => {
 }
 
 const updatePositionY = (event) => {
-  return event.pageY - props.grid.startScrollY
+  return event.pageY - timeLineGrid.value.startScrollY
 }
 
 const getTimeFromPoint = (value) => {
@@ -90,7 +131,7 @@ const getTimeFromPoint = (value) => {
   let minute = util.getOnlyDecimal(result, 2);
 
   hour = hour < 10 ? `0${hour}`: `${hour}`;
-  minute = Math.floor(minute*timeHeight / parseFloat(props.grid.oneMinute));
+  minute = Math.floor(minute*timeHeight / parseFloat(timeLineGrid.value.oneMinute));
   minute = minute < 10 ? `0${minute}`: `${minute}`;
 
   return {
@@ -100,16 +141,17 @@ const getTimeFromPoint = (value) => {
 }
 
 onMounted(() => {
-  props.grid.startScrollY = timeLineGridRef.value.getBoundingClientRect().top + window.scrollY;
+  timeLineGrid.value.startScrollY = timeLineGridRef.value.getBoundingClientRect().top + window.scrollY;
+
+  setCurrentTime();
+
+  emit('initGrid', day, timeHeight);
 
   timeLineGridRef.value.addEventListener('mousemove', (event) => {
-    messageGuide.value.hover = true;
-    messageGuide.value.x = `${absX.value}px`;
-    messageGuide.value.y = `${absY.value}px`;
+    emit('setPosMessage', true, absX.value, absY.value);
   });
   timeLineGridRef.value.addEventListener('mouseout', (event) => {
-    messageGuide.value.hover = false;
-    messageGuide.value.y = '-9999px';
+    emit('setPosMessage', false, 0, '-9999');
   });
 });
 
