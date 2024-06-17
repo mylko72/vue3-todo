@@ -27,12 +27,12 @@
         </v-col>
       </v-row>
     </div>
-    <ToDoTimeGrid class="mt-5" :unit="selectedView" :date="dateString"></ToDoTimeGrid>
+    <ToDoTimeSheet class="mt-5" :unit="selectedView" :date="dateString"></ToDoTimeSheet>
   </v-col>  
 </template>
 
 <script setup>
-import ToDoTimeGrid from '@/views/ToDoTimeGrid.vue';
+import ToDoTimeSheet from '@/views/ToDoTimeSheet.vue';
 import { useClock } from '@/composables/useClock';
 import { ref } from '@vue/reactivity';
 

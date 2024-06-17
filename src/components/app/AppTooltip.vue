@@ -48,10 +48,13 @@ const marginLeftSty = computed(() => {
   return { 'margin-left' : `${marginLeft.value}px`};
 })
 const marginTopSty = computed(() => {
+  marginTop.value = 0;
   if(props.isHover){
     if(props.direction === 'top'){
       marginTop.value = -(tooltip.value.clientHeight + 15);
     }
+  }else{
+    marginTop.value = 0;
   }
   return { 'margin-top' : `${marginTop.value}px`};
 });
@@ -64,7 +67,7 @@ const marginTopSty = computed(() => {
 .tooltip-view .inner > p {margin-bottom:0; font-size:.7rem; color: #666}
 .tooltip-view.top.show {margin-top:-5px;}
 .tooltip-view.bottom.show {margin-top:10px;}
-.tooltip-view.top .inner:before {bottom:-5px;left:50%;transform:rotate(-135deg)}
+.tooltip-view.top .inner:before {bottom:-4px;left:50%;transform:rotate(-135deg)}
 .tooltip-view.bottom .inner:before {top:-5px;left:50%;transform:rotate(45deg)}
 .tooltip-view.left .inner:before {right:-5px;top:calc(50% - 4px);transform:rotate(135deg)}
 .tooltip-view.right .inner:before {left:-5px;top:calc(50% - 4px);transform:rotate(-45deg)}
