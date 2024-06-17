@@ -76,6 +76,15 @@ export default {
         result  = Number(result .toFixed(length));
         return result;
       },
+      deepCopy: function(obj) {
+        let result = {};
+        if (typeof obj === "object" && obj !== null){
+          for (let i in obj) result[i] = $util.deepCopy(obj[i]);
+        } else {
+          result = obj;
+        }
+        return result;
+      },      
 		};
 
 		app.provide('util', $util);

@@ -1,6 +1,6 @@
 <template>
   <div class="todo-time__sheet">
-    {{ absX }}, {{ absY }}
+    {{ messageObjInfo.x }}, {{ messageObjInfo.y }}
     <div @click="createTimelineBar($event)" @mousemove="drawTimelineBar($event)" class="todo-time__grid" ref="timeLineGridRef">
       <div class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
     </div>
@@ -15,16 +15,17 @@
       <div class="todo-timeline__bar" :id="'bar_'+bar.id" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.timeRange + 'px' }"></div>
     </template>
     <Teleport to="body">
-			<AppTooltip :isHover="anchorHover" :left="absX" :top="absY" :direction="anchorDirection" :message="anchorMessage" />
+			<AppTooltip :isHover="messageObjInfo.hover" :left="messageObjInfo.x" :top="messageObjInfo.y" :direction="messageObjInfo.direction" :message="messageObjInfo.message" />
 		</Teleport>    
   </div>
 </template>
 
 <script setup>
-import { computed, ref, defineProps } from 'vue';
+import { computed, ref } from 'vue';
 import { onMounted, onUnmounted } from 'vue';
 import { inject } from 'vue';
 import { useMouse } from '@/composables/useMouse';
+import { useEventListener } from '@/composables/useEventListener';
 import { useTooltip } from '@/composables/useTooltip';
 import AppTooltip from '@/components/app/AppTooltip.vue'
 
@@ -43,14 +44,14 @@ const props = defineProps({
 const util = inject('util');
 
 const timeLineGridRef = ref(null);
+const messageObjInfo = ref({
+  hover: false,
+  direction: 'top',
+  message: '할 일을 등록하기 위해 시작시간을 선택하세요',
+  x: 0, 
+  y: 0,  
+});
 const { x: absX, y: absY } = useMouse(); 
-const { anchorTop, anchorLeft, anchorDirection, anchorMessage, anchorHover } = useTooltip(
-	{
-    'anchor': timeLineGridRef, 
-    'direction': 'top', 
-    'message': '할 일을 등록하기 위해\n 시작시간을 선택하세요'
-  }
-);
 
 const day = 24;
 // 그리드의 기본단위는 5분(minute)이며 1분은 2px이다.
@@ -83,7 +84,7 @@ const createTimelineBar = ($event) => {
 
   if(!timelineData.value.created){
     timelineData.value.created = true;
-    const cloneData = deepCopy(timelineData.value);
+    const cloneData = util.deepCopy(timelineData.value);
     timelineBar.value.push(cloneData);
   }
 
@@ -109,13 +110,6 @@ const createTimelineBar = ($event) => {
   }    
 };
 
-function deepCopy(obj) {
-  var result = {};
-  if (typeof obj === "object" && obj !== null)
-    for (let i in obj) result[i] = deepCopy(obj[i]);
-  else result = obj;
-  return result;
-}
 
 const drawTimelineBar = ($event) => {
   if(!timelineData.value.created) return false;
@@ -166,6 +160,12 @@ const initTimeline = () => {
   setCurrentTime();
   
   timeLineGrid.value.startScrollY = timeLineGridRef.value.getBoundingClientRect().top + window.scrollY;
+
+  timeLineGridRef.value.addEventListener('mousemove', (event) => {
+    messageObjInfo.value.hover = true;
+    messageObjInfo.value.x = `${absX.value}px`;
+    messageObjInfo.value.y = `${absY.value}px`;
+  });
 };
 
 //현재 시간 가져오기
@@ -187,7 +187,7 @@ const calcToPx = () => {
 }
 
 onMounted(() => {
-  initTimeline();
+  initTimeline();  
 })
 
 </script>

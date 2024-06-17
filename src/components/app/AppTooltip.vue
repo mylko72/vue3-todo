@@ -1,5 +1,5 @@
 <template>
-  <div ref="tooltip" :style="[{ 'left': left, 'top': top }, marginLeftSty]" :class="[{ show: isHover }, direction]" class="tooltip-view">
+  <div ref="tooltip" :style="[{ 'left': left, 'top': top }, marginLeftSty, marginTopSty]" :class="[{ show: isHover }, direction]" class="tooltip-view">
     <div class="inner arrow-down">
       <p v-html="message"></p>
     </div>
@@ -16,10 +16,10 @@ const props = defineProps({
     default: false
   },
   left: {
-    type: String,
+    type: [String, Number],
   },
   top: {
-    type: String,
+    type: [String, Number],
   },  
   message: {
     type: String,
@@ -31,6 +31,7 @@ const props = defineProps({
 
 const tooltip = ref(null);
 const marginLeft = ref(0);
+const marginTop = ref(0);
 const marginLeftSty = computed(() => {
   marginLeft.value = 0;
   if(props.isHover){
@@ -46,6 +47,14 @@ const marginLeftSty = computed(() => {
   }
   return { 'margin-left' : `${marginLeft.value}px`};
 })
+const marginTopSty = computed(() => {
+  if(props.isHover){
+    if(props.direction === 'top'){
+      marginTop.value = -(tooltip.value.clientHeight + 15);
+    }
+  }
+  return { 'margin-top' : `${marginTop.value}px`};
+});
 </script>
 
 <style scoped>
