@@ -3,9 +3,13 @@
     <div class="time-grid" v-for="n in getTotalGrid" :style="{ height: gridHeight + 'px' }"></div>
 
     <template v-for="bar in timelineBar">
-        <div class="todo-timeline__bar" :id="'bar_'+bar.id" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.timeRange + 'px' }"></div>
+      <TimeLineBar 
+        :id="bar.id" 
+        :active="bar.created" 
+        :top="bar.startPoint" 
+        :height="bar.timeRange">
+      </TimeLineBar>
     </template>
-    <!-- <TimeLineBar></TimeLineBar> -->
   </div>
 </template>
 
@@ -13,13 +17,19 @@
 import { computed, ref } from 'vue';
 import { inject, onMounted } from 'vue';
 import { useMouse } from '@/composables/useMouse';
+import TimeLineBar from '@/components/TimeLineBar.vue'
 
 const props = defineProps({
   unit: [String, Number],
   today: String,
 });
 
-const emit = defineEmits(['initGrid', 'showMessage', 'setPosMessage']);
+const emit = defineEmits([
+  'initGrid', 
+  'showMessage', 
+  'setPosMessage',
+  'sendTimeData'
+]);
 
 const util = inject('util');
 const { x: absX, y: absY } = useMouse(); 
@@ -63,7 +73,7 @@ const getTotalGrid = computed(() => {
 });
 
 //현재 시간 가져오기
-const setCurrentTime = (fetchHour) => {
+const scrollToCurrentTime = (fetchHour) => {
   let now = new Date();			//현재 시간을 가져오기 위한 Date 오브젝트 생성;
 
   timeLineGrid.value.currentTime = fetchHour ?? now.getHours();   // 서버에 저장된 시간(fetchHour)이 없다면 현재 시간을 timeLineGrid.value.currentTime에 저장       
@@ -101,6 +111,7 @@ const createTimelineBar = ($event) => {
     timelineBar.value[newIdx].startTime.minute = minute;
 
     emit('showMessage', '종료시간을 선택하세요');
+    emit('sendTimeData', timelineBar.value[newIdx]);
   }else{
     timelineBar.value[newIdx].endPoint = $event.pageY - startScrollY;
     console.log('endPoint', timelineBar.value[newIdx].endPoint);
@@ -110,7 +121,9 @@ const createTimelineBar = ($event) => {
     timelineBar.value[newIdx].endTime.minute = minute;
 
     timelineData.value.created = false;
+
     emit('showMessage', '시작시간을 선택하세요');
+    emit('sendTimeData', timelineBar.value[newIdx]);
   }    
 };
 
@@ -141,11 +154,12 @@ const getTimeFromPoint = (value) => {
   }
 }
 
-onMounted(() => {
+const initTimelineGrid = () => {
+  scrollToCurrentTime();
   timeLineGrid.value.startScrollY = timeLineGridRef.value.getBoundingClientRect().top + window.scrollY;
+}
 
-  setCurrentTime();
-
+const handleEvents = () => {
   emit('initGrid', day, timeHeight);
 
   timeLineGridRef.value.addEventListener('mousemove', (event) => {
@@ -154,6 +168,11 @@ onMounted(() => {
   timeLineGridRef.value.addEventListener('mouseout', (event) => {
     emit('setPosMessage', false, 0, '-9999');
   });
+}
+
+onMounted(() => {
+  initTimelineGrid();
+  handleEvents();
 });
 
 </script>

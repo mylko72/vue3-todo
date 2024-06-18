@@ -4,6 +4,7 @@
       @init-grid="initGrid"
       @show-message="showMessage" 
       @set-pos-message="setPosMessage"
+      @send-time-data="getTimeData"
       :unit="props.unit"
       :today="props.date">
     </TimeLineGrid>
@@ -19,14 +20,20 @@
     <Teleport to="body">
 			<AppTooltip :isHover="messageGuide.hover" :left="messageGuide.x" :top="messageGuide.y" :direction="messageGuide.direction" :message="messageGuide.message" />
 		</Teleport>    
+    <TimeLineWrite 
+      :startHour="startTime.hour"
+      :startMinute="startTime.minute"
+      :endHour="endTime.hour"
+      :endMinute="endTime.minute">
+    </TimeLineWrite>
   </div>
-  <!-- <TimeLineWrite></TimeLineWrite> -->
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
 import { onMounted, onUnmounted } from 'vue';
 import TimeLineGrid from '@/components/TimeLineGrid.vue';
+import TimeLineWrite from '@/components/TimeLineWrite.vue';
 import AppTooltip from '@/components/app/AppTooltip.vue'
 
 const props = defineProps({
@@ -42,7 +49,15 @@ const props = defineProps({
 });
 
 const oneDay = ref(0);
-const timeHeight = ref(0)
+const timeHeight = ref(0);
+const startTime = ref({
+  hour: 0,
+  minute: 0
+});
+const endTime = ref({
+  hour: 0,
+  minute: 0
+});
 
 const messageGuide = ref({
   hover: false,
@@ -61,6 +76,17 @@ const setPosMessage = (hover, x, y) => {
   messageGuide.value.hover = hover;
   messageGuide.value.x = `${x}px`;
   messageGuide.value.y = `${y}px`;
+}
+
+const getTimeData = (timelineBar) => {
+  if(timelineBar.startTime.hour.length > 0){
+    startTime.value.hour = timelineBar.startTime.hour;
+    startTime.value.minute = timelineBar.startTime.minute;
+  }
+  if(timelineBar.endTime.hour.length > 0){
+    endTime.value.hour = timelineBar.endTime.hour;
+    endTime.value.minute = timelineBar.endTime.minute;
+  }
 }
 
 const setTimeList = (i) => {
