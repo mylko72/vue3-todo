@@ -8,7 +8,7 @@
       :today="props.date">
     </TimeLineGrid>
 
-    <div class="todo-time__list">
+    <div class="todo-time__set">
       <ul>
         <li v-for="i in oneDay" :key="i" :style="{ height: timeHeight + 'px' }">
           <span class='time'>{{ setTimeList(i) }}</span>
@@ -20,6 +20,7 @@
 			<AppTooltip :isHover="messageGuide.hover" :left="messageGuide.x" :top="messageGuide.y" :direction="messageGuide.direction" :message="messageGuide.message" />
 		</Teleport>    
   </div>
+  <!-- <TimeLineWrite></TimeLineWrite> -->
 </template>
 
 <script setup>
@@ -79,7 +80,7 @@ const initGrid = (day, height) => {
     height: 100%;
     padding: 0 25px 50px 80px;
 
-    .todo-time__list {
+    .todo-time__set {
       position: absolute;
       left: 30px;
       top: -10px;

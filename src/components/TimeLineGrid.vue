@@ -4,7 +4,8 @@
 
     <template v-for="bar in timelineBar">
         <div class="todo-timeline__bar" :id="'bar_'+bar.id" :class="{'active': bar.created}" :style="{ top: bar.startPoint + 'px', height: bar.timeRange + 'px' }"></div>
-      </template>
+    </template>
+    <!-- <TimeLineBar></TimeLineBar> -->
   </div>
 </template>
 

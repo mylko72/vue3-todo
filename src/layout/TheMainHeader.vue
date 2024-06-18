@@ -12,7 +12,7 @@
       </div> -->
       <v-divider vertical="" class="mx-auto mb-5"></v-divider>
       <v-card width="200" height="80" density rounded="10" class="todo-list__bx">
-        <v-list width="170" class="mx-auto">
+        <v-list width="170" class="mx-auto my-auto">
           <v-list-item density title="할 일">
             <template #append>
               <span>00 건</span>
@@ -39,5 +39,25 @@ import CurrentTime from '@/components/CurrentTime.vue'
 </script>
 
 <style lang="scss" scoped>
+.main-header {
+  max-width: 320px;
+  border-right: 1px solid #ddd;
+
+  .text-h3 {
+    font-weight: 700;
+  }
+
+  .todo-list__bx {
+    flex: 0 0 80px;
+  }
+
+  .todo-btn__area {
+    display: inline-flex;
+    justify-content: space-between;
   
+    button {
+      margin: 0 10px;
+    }
+  }
+}  
 </style>
