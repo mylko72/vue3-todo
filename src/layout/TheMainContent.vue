@@ -29,10 +29,14 @@
     </div>
     <ToDoTimeSheet class="mt-5" :unit="selectedView" :date="dateString"></ToDoTimeSheet>
   </v-col>  
+  <v-col cols="4">
+    <ToDoTimeListVue></ToDoTimeListVue>
+  </v-col>
 </template>
 
 <script setup>
 import ToDoTimeSheet from '@/views/ToDoTimeSheet.vue';
+import ToDoTimeListVue from '@/views/ToDoTimeList.vue';
 import { useClock } from '@/composables/useClock';
 import { ref } from '@vue/reactivity';
 

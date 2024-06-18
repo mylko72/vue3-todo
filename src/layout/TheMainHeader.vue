@@ -4,7 +4,7 @@
       <h1 class="text-h3">Time Capsule</h1>
       <p class="text-subtitle-1 text-weight-bold mt-2">할 일을 기록하다.</p>
       <v-divider vertical="" class="mx-auto mb-5"></v-divider>
-      <ToDoCurrentTime></ToDoCurrentTime>
+      <CurrentTime></CurrentTime>
       <!-- <div class="todo-time__area">
         <v-img :width="48" :height="48" src="/assets/images/ico-time.png"></v-img>
         <span class="time mt-3">05/28/2024</span>
@@ -35,26 +35,9 @@
 </template>
 
 <script setup>
-import ToDoCurrentTime from '@/views/ToDoCurrentTime.vue'
+import CurrentTime from '@/components/CurrentTime.vue'
 </script>
 
 <style lang="scss" scoped>
-  .main-header {
-    max-width: 320px;
-  }
-
-  .text-h3 {
-    font-weight: 700;
-  }
-  .todo-list__bx {
-    flex: 0 0 80px;
-  }
-  .todo-btn__area {
-    display: inline-flex;
-    justify-content: space-between;
-
-    button {
-      margin: 0 10px;
-    }
-  }
+  
 </style>
