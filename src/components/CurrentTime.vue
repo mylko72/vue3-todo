@@ -1,7 +1,7 @@
 <template>
   <div class="todo-time__area">
     <v-img :width="48" :height="48" src="/assets/images/ico-time.png"></v-img>
-    <span class="txt-date mt-3">{{ dateString }}</span>
+    <span class="txt-date mt-3">{{ dateString }} <span class="txt-day">({{ dayString }})</span></span>     
     <span class="txt-time">{{ timeString }} <sup>{{ ampm }}</sup></span>
   </div>
 </template>
@@ -9,7 +9,7 @@
 <script setup>
 import { useClock } from '@/composables/useClock';
 
-const { dateString, timeString, ampm } = useClock();
+const { dateString, dayString, timeString, ampm } = useClock();
 
 </script>
 
@@ -20,7 +20,12 @@ const { dateString, timeString, ampm } = useClock();
     align-items: center;
 
     .txt-date {
+      display: flex;
+      align-items: center;
       font-size: 1.5rem;
+    }
+    .txt-day {
+      font-size: 1rem;
     }
     .txt-time {
       position: relative;

@@ -18,41 +18,50 @@ export const useClock = () => {
   });
   
   const dateString = ref('');
+  const dayString = ref('');
   const timeString = ref('');
   const ampm = ref('');
   
-  const getCurrentDate = () => {
-    const now = new Date();
-    currentDate.value.today = now;
-    currentDate.value.year = now.getFullYear();
-    currentDate.value.month = ( now.getMonth()+1 > 9 ) ? now.getMonth()+1 : "0" + (now.getMonth()+1);
-    currentDate.value.date = ( now.getDate() > 9 ) ? now.getDate() : "0" + now.getDate();
+  const getCurrentDate = (date) => {
+    currentDate.value.today = date;
+    currentDate.value.year = date.getFullYear();
+    currentDate.value.month = ( date.getMonth()+1 > 9 ) ? date.getMonth()+1 : "0" + (date.getMonth()+1);
+    currentDate.value.date = ( date.getDate() > 9 ) ? date.getDate() : "0" + date.getDate();
   
     return `${currentDate.value.month}/${currentDate.value.date}/${currentDate.value.year}`;
   }
   
-  const getCurrentTime = () => {
-    const now = new Date();
-    const hour = now.getHours();
+  const getCurrentTime = (date) => {
+    // const now = new Date();
+    const hour = date.getHours();
   
     ampm.value = (hour<12 || hour == 24) ? 'AM' : 'PM';
     currentTime.value.hour = hour % 12 || 12;
     
-    const minute = now.getMinutes();
+    const minute = date.getMinutes();
     currentTime.value.minute = ( minute > 9 ) ? minute : "0" + minute;
     
-    const second = now.getSeconds(); 
+    const second = date.getSeconds(); 
     currentTime.value.second = ( second > 9 ) ? second : "0" + second;
     
-    let millisec = now.getMilliseconds(); 
+    let millisec = date.getMilliseconds(); 
     millisec = ( millisec > 99 ) ? millisec : ( millisec > 9 ) ? "0" + millisec : "00" + millisec;
   
     return `${currentTime.value.hour}:${currentTime.value.minute}:${currentTime.value.second}`;
   }
+
+  const getCurrentDay = (date) => {
+    return new Intl.DateTimeFormat(
+      'ko',
+      { weekday: 'long' }
+    ).format(date);
+  }
   
   const updateClock = () => {
-    dateString.value = getCurrentDate();
-    timeString.value = getCurrentTime();
+    const today = new Date();
+    dateString.value = getCurrentDate(today);
+    dayString.value = getCurrentDay(today);
+    timeString.value = getCurrentTime(today);
   }
   
   onMounted(() => {
@@ -61,6 +70,7 @@ export const useClock = () => {
   
   return {
     dateString,
+    dayString,
     timeString,
     ampm
   }  
