@@ -10,12 +10,7 @@ import { useClock } from '@/composables/useClock';
 import { ref } from '@vue/reactivity';
 
 const { dateString } = useClock();
-const selectItems = ref([
-  {view: '1x', unit: '2px'},
-  {view: '2x', unit: '4px'},
-  {view: '3x', unit: '6px'},
-]);
-const selectedView = ref(selectItems.value[0].unit);
+const selectedView = ref('2px');
 const changeView = (view) => {
   selectedView.value = view;
 }

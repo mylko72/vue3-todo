@@ -96,7 +96,8 @@ const setTimeList = (i) => {
 
 const initGrid = (day, height) => {
   oneDay.value = day;
-  timeHeight.value = height.value;
+  timeHeight.value = height;
+  console.log('height', height);
 }
 </script>
 

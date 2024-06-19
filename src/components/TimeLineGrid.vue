@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { inject, onMounted } from 'vue';
 import { useMouse } from '@/composables/useMouse';
 import TimeLineBar from '@/components/TimeLineBar.vue'
@@ -59,9 +59,6 @@ const timelineData = ref({
   created: false
 });
 
-const timeHeight = computed(() => {
-  return calcToPx();
-});
 
 const gridHeight = computed(() => {
   timeLineGrid.value.oneMinute = props.unit;
@@ -139,14 +136,15 @@ const updatePositionY = (event) => {
 }
 
 const getTimeFromPoint = (value) => {
-  let timeHeight = calcToPx();
-  let result = value / timeHeight;
+  let result = value / calcToPx();
   let hour = Math.floor(result);
   let minute = util.getOnlyDecimal(result, 2);
 
   hour = hour < 10 ? `0${hour}`: `${hour}`;
-  minute = Math.floor(minute*timeHeight / parseFloat(timeLineGrid.value.oneMinute));
+  minute = Math.floor(minute*calcToPx() / parseFloat(timeLineGrid.value.oneMinute));
   minute = minute < 10 ? `0${minute}`: `${minute}`;
+
+  emit('initGrid', day, calcToPx());
 
   return {
     hour,
@@ -160,8 +158,6 @@ const initTimelineGrid = () => {
 }
 
 const handleEvents = () => {
-  emit('initGrid', day, timeHeight);
-
   timeLineGridRef.value.addEventListener('mousemove', (event) => {
     emit('setPosMessage', true, absX.value, absY.value);
   });
@@ -169,6 +165,8 @@ const handleEvents = () => {
     emit('setPosMessage', false, 0, '-9999');
   });
 }
+
+watchEffect(getTimeFromPoint);
 
 onMounted(() => {
   initTimelineGrid();
