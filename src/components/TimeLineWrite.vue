@@ -1,5 +1,5 @@
 <template>
-  <div class="todo-time__write">
+  <div class="todo-time__write" :style="{ width: props.setWidth + 'px'}">
     <h1 class="text-h3">Guest님,</h1>
     <div class="txt-selected-time">
       <span class="time">{{ props.startHour }}</span><span class="txt">시</span> <span class="time">{{ props.startMinute }}</span><span class="txt">분 부터</span><br />
@@ -10,12 +10,17 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue';
+
 const props = defineProps({
+  setWidth: Number,
   startHour: String,
   startMinute: String,
   endHour: String,
   endMinute: String
-})
+});
+
+const timeWriteRef = ref(null);
 </script>
 
 <style lang="scss" scoped>

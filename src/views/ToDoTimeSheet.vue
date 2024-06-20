@@ -1,5 +1,5 @@
 <template>
-  <div class="todo-time__sheet">
+  <div class="todo-time__sheet" ref="timeSheetRef">
     <TimeLineGrid 
       @init-grid="initGrid"
       @show-message="showMessage" 
@@ -40,6 +40,8 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['sendTimeWidth']);
+
 const oneDay = ref(0);
 const timeHeight = ref(0);
 const messageGuide = ref({
@@ -49,6 +51,7 @@ const messageGuide = ref({
   x: 0, 
   y: -9999,  
 });
+const timeSheetRef = ref(null);
 
 // 메소드정의
 const showMessage = (msg) => {
@@ -71,6 +74,14 @@ const initGrid = (day, height) => {
   timeHeight.value = height;
   console.log('height', height);
 }
+
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    emit('sendTimeWidth', timeSheetRef.value.clientWidth);    
+  })
+  
+  emit('sendTimeWidth', timeSheetRef.value.clientWidth);
+});
 </script>
 
 <style lang="scss" scoped>
