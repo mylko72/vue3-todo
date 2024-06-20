@@ -22,13 +22,18 @@ const props = defineProps({
 .todo-time__write {
   position: fixed;
   top: 0;
-  right: 10px;
+  left: 320px;
   width: 470px;  
   height: 100%;
   padding: 50px 30px 30px;
   border: 1px solid #ddd;
   border-radius: 0 25px 25px 0;
   background-color: #fff;
+  transition: transform .5s;
+
+  &.active {
+    transform: translate(100%, 0);
+  }
 
   .text-h3 {
     margin-bottom: 1rem;
