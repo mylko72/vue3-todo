@@ -18,6 +18,7 @@ const props = defineProps({
     left: 150px; 
     top: 100px;
     width: 50px;
+    min-height: 2px;
     background: #7749F8;
     box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
     border-radius: 5px;

@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-row no-gutters cols="">
-      <v-col cols="4">
+      <v-col cols="6">
         <ToDoTimeLine></ToDoTimeLine>
       </v-col>  
-      <v-col cols="4">
+      <v-col cols="6">
         <ToDoTimeListVue class="todo-time__list"></ToDoTimeListVue>
       </v-col>
     </v-row>
