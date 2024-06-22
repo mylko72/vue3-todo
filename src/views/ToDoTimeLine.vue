@@ -12,13 +12,17 @@
 
   <TimeLineWrite
     :setWidth="timeLineWidth"
+    v-bind="todo">
+  </TimeLineWrite>
+  <!-- <TimeLineWrite
+    :setWidth="timeLineWidth"
     :startHour="todo.startTime.hour"
     :startMinute="todo.startTime.minute"
     :endHour="todo.endTime.hour"
     :endMinute="todo.endTime.minute"
     :created="todo.created"
   >
-  </TimeLineWrite>
+  </TimeLineWrite> -->
 </template>
 
 <script setup>

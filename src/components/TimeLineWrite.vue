@@ -10,19 +10,17 @@
       <v-form @submit.prevent>
         <v-text-field
           v-model="title"
-          :rules="rules"
           label="제목"
           variant="underlined"
         ></v-text-field>
         <v-textarea
           v-model="content"
-          :rules="rules"
           label="내용"
           variant="underlined"
         ></v-textarea>
         <v-row justify-sm="center">
-          <v-btn class="mt-2 mr-2" color="light-blue-darken-3" type="submit">등록</v-btn>
-          <v-btn class="mt-2">취소</v-btn>
+          <v-btn class="mt-2 mr-2" @click="handleSave" color="light-blue-darken-3" type="submit">등록</v-btn>
+          <v-btn class="mt-2" @click="handleCancel">취소</v-btn>
           </v-row>
         </v-form>
     </v-sheet>
@@ -30,30 +28,38 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, ref, unref } from 'vue';
+import { createTodo } from '@/api/todos'
 
 const props = defineProps({
   setWidth: Number,
-  startHour: String,
-  startMinute: String,
-  endHour: String,
-  endMinute: String,
+  startTime: Object,
+  endTime: Object,
+  title: {
+    type: String,
+    required: true
+  },
+  content: String,
   created: Boolean
 });
+const todo = inject('todo');
+
 const startTime = ref({
   hour: '00',
   minute: '00'
-})
+});
 const endTime = ref({
   hour: '00',
   minute: '00'
-})
+});
+const title = ref('');
+const content = ref('');
 const translateView = computed(() => {
   return props.created && 'translateX('+ props.setWidth + 'px)';
 });
 const activeClass = ref(false);
 const activeClass2 = computed(() => {
-  return props.endHour.length > 0 && true;
+  return props.endTime.hour.length > 0 && true;
 });
 const activeClass3 = ref(false);
 const activeForm = ref(false);
@@ -63,21 +69,28 @@ const startTimeRef = ref(null);
 const startTimeRef2 = ref(null);
 const startTimeRef3 = ref(null);
 
+const handleSave = () => {
+  todo.value.title = title.value;
+  todo.value.content = content.value;
+  const todoData = unref(todo.value);
+  createTodo(todoData);
+}
+
 onMounted(() => {
   timeWriteRef.value.addEventListener('transitionend', () => {
     activeClass.value = true;
   }); 
   startTimeRef.value.addEventListener('transitionend', () => {
-    startTime.value.hour = props.startHour;
-    startTime.value.minute = props.startMinute;
+    startTime.value.hour = props.startTime.hour;
+    startTime.value.minute = props.startTime.minute;
   });
   startTimeRef2.value.addEventListener('transitionend', () => {
-    endTime.value.hour = props.endHour;
-    endTime.value.minute = props.endMinute;
+    endTime.value.hour = props.endTime.hour;
+    endTime.value.minute = props.endTime.minute;
 
     setTimeout(() => {
       activeClass3.value = true;
-    }, 400);
+    }, 300);
   });
   startTimeRef3.value.addEventListener('transitionend', () => {
     activeForm.value = true;
@@ -97,7 +110,7 @@ onMounted(() => {
   border: 1px solid #ddd;
   border-radius: 0 25px 25px 0;
   background-color: #fff;
-  transition: transform .5s;
+  transition: transform 1s;
 
   &.active {
     transform: translate(100%, 0);
@@ -119,7 +132,7 @@ onMounted(() => {
     
     p {
       transform: translateY(50px);
-      transition: transform 1s;
+      transition: transform .7s;
       &.active {
         transform: translateY(0);
         .txt {
