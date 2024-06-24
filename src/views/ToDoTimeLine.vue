@@ -11,18 +11,10 @@
   </ToDoTimeSheet>
 
   <TimeLineWrite
-    :setWidth="timeLineWidth"
-    v-bind="todo">
+    @reset-created="resetCreated"
+    :setWidth="timeLineWidth"    
+    v-bind="todoData">
   </TimeLineWrite>
-  <!-- <TimeLineWrite
-    :setWidth="timeLineWidth"
-    :startHour="todo.startTime.hour"
-    :startMinute="todo.startTime.minute"
-    :endHour="todo.endTime.hour"
-    :endMinute="todo.endTime.minute"
-    :created="todo.created"
-  >
-  </TimeLineWrite> -->
 </template>
 
 <script setup>
@@ -32,7 +24,7 @@ import TimeLineWrite from '@/components/TimeLineWrite.vue';
 import ToDoTimeSheet from '@/views/ToDoTimeSheet.vue';
 import { useClock } from '@/composables/useClock';
 
-const todo = inject('todo');
+const todoData = inject('todoData');
 const { dateString } = useClock();
 const selectedView = ref('2px');
 const timeLineWidth = ref(0);
@@ -41,6 +33,9 @@ const changeView = (view) => {
 }
 const getTimeWidth = (width) => {
   timeLineWidth.value = width;
+}
+const resetCreated = () => {
+  todoData.value.created = false;
 }
 </script>
 

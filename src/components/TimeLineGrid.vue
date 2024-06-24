@@ -32,7 +32,7 @@ const emit = defineEmits([
 ]);
 
 const util = inject('util');
-const todo = inject('todo');
+const todoData = inject('todoData');
 const { x: absX, y: absY } = useMouse(); 
 const timeLineGridRef = ref(null);
 
@@ -111,8 +111,8 @@ const createTimelineBar = ($event) => {
     emit('showMessage', '종료시간을 선택하세요');
     // emit('sendTimeData', timelineBar.value[newIdx]);
 
-    todo.value = {...timelineBar.value[newIdx]};
-    console.log('todo', todo.value);
+    todoData.value = {...timelineBar.value[newIdx]};
+    console.log('todoData', todoData.value);
   }else{
     timelineBar.value[newIdx].endPoint = $event.pageY - startScrollY;
     console.log('endPoint', timelineBar.value[newIdx].endPoint);
@@ -125,8 +125,8 @@ const createTimelineBar = ($event) => {
 
     emit('showMessage', '시작시간을 선택하세요');
     // emit('sendTimeData', timelineBar.value[newIdx]);
-    todo.value = {...timelineBar.value[newIdx]};
-    console.log('todo', todo.value);
+    todoData.value = {...timelineBar.value[newIdx]};
+    console.log('todoData', todoData.value);
   }    
 };
 

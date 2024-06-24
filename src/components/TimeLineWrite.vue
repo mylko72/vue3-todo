@@ -1,5 +1,5 @@
 <template>
-  <div class="todo-time__write" :style="{ width: props.setWidth + 'px', transform: translateView }" ref="timeWriteRef">
+  <div class="todo-time__write" :class="{opened: props.created}" :style="{ width: props.setWidth + 'px', transform: translateView }" ref="timeWriteRef">
     <h1 class="text-h3">Guest님,</h1>
     <div class="txt-selected-time">
       <p :class="{ active: activeClass }" ref="startTimeRef"><span class="time">{{ startTime.hour }}</span><span class="txt">시</span> <span class="time">{{ startTime.minute }}</span><span class="txt">분 부터</span></p>
@@ -19,7 +19,7 @@
           variant="underlined"
         ></v-textarea>
         <v-row justify-sm="center">
-          <v-btn class="mt-2 mr-2" @click="handleSave" color="light-blue-darken-3" type="submit">등록</v-btn>
+          <v-btn class="mt-2 mr-2" @click="handleCreate($event)" color="light-blue-darken-3" type="submit">등록</v-btn>
           <v-btn class="mt-2" @click="handleCancel">취소</v-btn>
           </v-row>
         </v-form>
@@ -42,7 +42,8 @@ const props = defineProps({
   content: String,
   created: Boolean
 });
-const todo = inject('todo');
+const emit = defineEmits(['resetCreated'])
+const todoData = inject('todoData');
 
 const startTime = ref({
   hour: '00',
@@ -54,8 +55,15 @@ const endTime = ref({
 });
 const title = ref('');
 const content = ref('');
+
 const translateView = computed(() => {
-  return props.created && 'translateX('+ props.setWidth + 'px)';
+  let result = null;
+  if(props.created){
+    result = props.setWidth;
+  }else{
+    result = 0;
+  }
+  return `translateX(${result}px)`;
 });
 const activeClass = ref(false);
 const activeClass2 = computed(() => {
@@ -69,11 +77,23 @@ const startTimeRef = ref(null);
 const startTimeRef2 = ref(null);
 const startTimeRef3 = ref(null);
 
-const handleSave = () => {
-  todo.value.title = title.value;
-  todo.value.content = content.value;
-  const todoData = unref(todo.value);
-  createTodo(todoData);
+const resetForm = () => {
+  emit('resetCreated', false);
+  
+  title.value = '';
+  content.value = '';
+  activeClass.value = false;
+  activeClass2.value = false;
+  activeClass3.value = false;
+  activeForm.value = false;
+}
+const handleCreate = (event) => {
+  event.stopPropagation();
+  todoData.value.title = title.value;
+  todoData.value.content = content.value;
+
+  resetForm();
+  createTodo({...todoData.value});
 }
 
 onMounted(() => {

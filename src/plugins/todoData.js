@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 export default {
 	install(app, options) {
-    const $todo = ref({
+    const $todoData = ref({
       id: '',
       theDate : '',
       startTime: {hour: 0, minute: 0},
@@ -16,6 +16,6 @@ export default {
       created: false    
     });
 
-    app.provide('todo', $todo);
+    app.provide('todoData', $todoData);
   }
 }
