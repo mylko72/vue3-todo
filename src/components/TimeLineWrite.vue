@@ -79,9 +79,13 @@ const startTimeRef3 = ref(null);
 
 const resetForm = () => {
   emit('resetCreated', false);
-  
+
   title.value = '';
   content.value = '';
+  // startTime.value.hour = '00';
+  // startTime.value.minute = '00';
+  // endTime.value.hour = '00';
+  // endTime.value.minute = '00';
   activeClass.value = false;
   activeClass2.value = false;
   activeClass3.value = false;
@@ -98,22 +102,36 @@ const handleCreate = (event) => {
 
 onMounted(() => {
   timeWriteRef.value.addEventListener('transitionend', () => {
-    activeClass.value = true;
+    if(props.created){
+      activeClass.value = true;
+    }
   }); 
   startTimeRef.value.addEventListener('transitionend', () => {
-    startTime.value.hour = props.startTime.hour;
-    startTime.value.minute = props.startTime.minute;
+    if(props.created){
+      startTime.value.hour = props.startTime.hour;
+      startTime.value.minute = props.startTime.minute;
+    }else{
+      startTime.value.hour = '00'
+      startTime.value.minute = '00'
+    }
   });
   startTimeRef2.value.addEventListener('transitionend', () => {
-    endTime.value.hour = props.endTime.hour;
-    endTime.value.minute = props.endTime.minute;
+    if(props.created){    
+      endTime.value.hour = props.endTime.hour;
+      endTime.value.minute = props.endTime.minute;
 
-    setTimeout(() => {
-      activeClass3.value = true;
-    }, 300);
+      setTimeout(() => {
+        activeClass3.value = true;
+      }, 300);
+    }else{
+      endTime.value.hour = '00';
+      endTime.value.minute = '00';
+    }
   });
   startTimeRef3.value.addEventListener('transitionend', () => {
-    activeForm.value = true;
+    if(props.created){  
+      activeForm.value = true;
+    }
   });
 })
 
@@ -151,10 +169,13 @@ onMounted(() => {
     }
     
     p {
-      transform: translateY(50px);
-      transition: transform .7s;
+      // transform: translateY(50px);
+      transition: opacity .7s;
+      opacity: .3;
+
       &.active {
         transform: translateY(0);
+        opacity: 1;
         .txt {
           opacity: 1;
         }

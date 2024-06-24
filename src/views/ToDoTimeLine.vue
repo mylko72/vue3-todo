@@ -35,6 +35,10 @@ const getTimeWidth = (width) => {
   timeLineWidth.value = width;
 }
 const resetCreated = () => {
+  todoData.value.startTime.hour = 0;
+  todoData.value.startTime.minute = 0;
+  todoData.value.endTime.hour = 0;
+  todoData.value.endTime.minute = 0;
   todoData.value.created = false;
 }
 </script>
