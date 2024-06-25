@@ -8,6 +8,36 @@
         :active="bar.created" 
         :top="bar.startPoint" 
         :height="bar.timeRange">
+        <template #bar>
+          <span class="bar"></span>
+        </template>
+        <template #card>
+          <v-card
+            :loading="inProgress"
+            class="card-view"
+            max-width="544"
+            hover
+          >
+            <v-card-item v-if="!inProgress">
+              <v-card-title>
+                할 일
+              </v-card-title>
+              <v-card-subtitle>
+                20:43 ~ 22:10
+              </v-card-subtitle>
+            </v-card-item>
+
+            <v-card-item class="in-progress" v-else>
+              <v-card-title>
+                등록중...
+              </v-card-title>
+            </v-card-item>
+
+            <v-card-text v-if="!inProgress">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </v-card-text>
+          </v-card>
+        </template>
       </TimeLineBar>
     </template>
   </div>
@@ -45,7 +75,7 @@ const timeLineGrid = ref({
   currentScollY: 0,
   startScrollY: 0
 });
-
+const inProgress = ref(false);
 const timelineBar = ref([]);
 const timelineData = ref({...todoData.value});
 
@@ -83,6 +113,7 @@ const createTimelineBar = ($event) => {
     timelineData.value.created = true;
     const cloneData = util.deepCopy(timelineData.value);
     timelineBar.value.push(cloneData);
+    inProgress.value = true;
   }
 
   const newIdx = timelineBar.value.length-1;
@@ -187,16 +218,31 @@ onMounted(() => {
   .todo-timeline__bar {
     display: none;
     position: absolute;
-    left: 150px; 
+    left: 120px; 
     top: 100px;
-    width: 50px;
-    background: #7749F8;
-    box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
-    border-radius: 5px;
-    text-shadow: 1px 1px 1px rgba(0,0,0,.1);    
     
+    .bar {
+      display: inline-block;
+      width: 50px;
+      height: 100%;
+      min-height: 10px;
+      background: #7749F8;
+      box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
+      border-radius: 5px;
+      text-shadow: 1px 1px 1px rgba(0,0,0,.1);          
+    }
+
+    .card-view {
+      min-width: 244px;
+      margin-left: 20px;
+
+      .in-progress {
+        height: 100%;
+        justify-content: center;
+      }
+    }
     &.active {
-      display: block;
+      display: flex;
     }
   }
 </style>

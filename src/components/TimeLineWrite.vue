@@ -9,13 +9,13 @@
     <v-sheet class="todo-time__form mx-auto mt-10" :class="{ active: activeForm }">
       <v-form @submit.prevent>
         <v-text-field
-          v-model="title"
+          v-model="currentTodo.title"
           label="제목"
           variant="underlined"
           ref="inputRef"
         ></v-text-field>
         <v-textarea
-          v-model="content"
+          v-model="currentTodo.content"
           label="내용"
           variant="underlined"
         ></v-textarea>
@@ -45,20 +45,28 @@ const props = defineProps({
 });
 const emit = defineEmits(['resetTodo'])
 const todoData = inject('todoData');
-const vFocus = {
-  mounted: (el) => el.focus()
-}
-
-const startTime = ref({
-  hour: '00',
-  minute: '00'
+const currentTodo = ref({
+  startTime: {
+    hour: '00',
+    minute: '00'
+  },
+  endTime: {
+    hour: '00',
+    minute: '00'
+  },
+  title: '',
+  content: ''
 });
-const endTime = ref({
-  hour: '00',
-  minute: '00'
-});
-const title = ref('');
-const content = ref('');
+// const startTime = ref({
+//   hour: '00',
+//   minute: '00'
+// });
+// const endTime = ref({
+//   hour: '00',
+//   minute: '00'
+// });
+// const title = ref('');
+// const content = ref('');
 
 const translateView = computed(() => {
   let result = null;
@@ -85,12 +93,8 @@ const inputRef = ref(null);
 const resetForm = () => {
   emit('resetTodo', false);
 
-  title.value = '';
-  content.value = '';
-  // startTime.value.hour = '00';
-  // startTime.value.minute = '00';
-  // endTime.value.hour = '00';
-  // endTime.value.minute = '00';
+  currentTodo.value.title = '';
+  currentTodo.value.content = '';
   activeClass.value = false;
   activeClass2.value = false;
   activeClass3.value = false;
@@ -98,11 +102,11 @@ const resetForm = () => {
 }
 const handleCreate = (event) => {
   event.stopPropagation();
-  todoData.value.title = title.value;
-  todoData.value.content = content.value;
+  todoData.value.title = currentTodo.value.title;
+  todoData.value.content = currentTodo.value.content;
 
-  resetForm();
   createTodo({...todoData.value});
+  resetForm();
 }
 
 onMounted(() => {
@@ -113,25 +117,25 @@ onMounted(() => {
   }); 
   startTimeRef.value.addEventListener('transitionend', () => {
     if(props.created){
-      startTime.value.hour = props.startTime.hour;
-      startTime.value.minute = props.startTime.minute;
+      currentTodo.value.startTime.hour = props.startTime.hour;
+      currentTodo.value.startTime.minute = props.startTime.minute;
     }else{
-      startTime.value.hour = '00'
-      startTime.value.minute = '00'
+      currentTodo.value.startTime.hour = '00'
+      currentTodo.value.startTime.minute = '00'
     }
   });
   startTimeRef2.value.addEventListener('transitionend', () => {
     if(props.created){    
-      endTime.value.hour = props.endTime.hour;
-      endTime.value.minute = props.endTime.minute;
+      currentTodo.value.endTime.hour = props.endTime.hour;
+      currentTodo.value.endTime.minute = props.endTime.minute;
 
       setTimeout(() => {
         activeClass3.value = true;
         inputRef.value.focus();
       }, 300);
     }else{
-      endTime.value.hour = '00';
-      endTime.value.minute = '00';
+      currentTodo.value.endTime.hour = '00';
+      currentTodo.value.endTime.minute = '00';
     }
   });
   startTimeRef3.value.addEventListener('transitionend', () => {
@@ -175,8 +179,8 @@ onMounted(() => {
     }
     
     p {
-      // transform: translateY(50px);
-      transition: opacity .3s;
+      transform: translateY(10px);
+      transition: all .3s;
       opacity: .3;
 
       &.active {

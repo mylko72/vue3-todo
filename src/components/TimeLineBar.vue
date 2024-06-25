@@ -1,5 +1,12 @@
 <template>
-  <div class="todo-timeline__bar" :id="'bar_'+props.id" :class="{'active': props.active}" :style="{ top: props.top + 'px', height: props.height + 'px' }"></div>
+  <div 
+    class="todo-timeline__bar" 
+    :id="'bar_'+props.id" 
+    :class="{'active': props.active}" 
+    :style="{ top: props.top + 'px', height: props.height + 'px' }">
+    <slot name="bar"></slot>
+    <slot name="card"></slot>
+  </div>
 </template>
 
 <script setup>
@@ -12,20 +19,20 @@ const props = defineProps({
 </script>
 
 <style lang="scss" scoped>
-  .todo-timeline__bar {
-    display: none;
-    position: absolute;
-    left: 150px; 
-    top: 100px;
-    width: 50px;
-    min-height: 2px;
-    background: #7749F8;
-    box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
-    border-radius: 5px;
-    text-shadow: 1px 1px 1px rgba(0,0,0,.1);    
+  // .todo-timeline__bar {
+  //   display: none;
+  //   position: absolute;
+  //   left: 150px; 
+  //   top: 100px;
+  //   width: 50px;
+  //   min-height: 2px;
+  //   background: #7749F8;
+  //   box-shadow: 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1);
+  //   border-radius: 5px;
+  //   text-shadow: 1px 1px 1px rgba(0,0,0,.1);    
     
-    &.active {
-      display: block;
-    }
-  }
+  //   &.active {
+  //     display: block;
+  //   }
+  // }
 </style>
