@@ -11,7 +11,7 @@
   </ToDoTimeSheet>
 
   <TimeLineWrite
-    @reset-created="resetCreated"
+    @reset-todo="resetTodo"
     :setWidth="timeLineWidth"    
     v-bind="todoData">
   </TimeLineWrite>
@@ -34,12 +34,20 @@ const changeView = (view) => {
 const getTimeWidth = (width) => {
   timeLineWidth.value = width;
 }
-const resetCreated = () => {
-  todoData.value.startTime.hour = 0;
-  todoData.value.startTime.minute = 0;
-  todoData.value.endTime.hour = 0;
-  todoData.value.endTime.minute = 0;
-  todoData.value.created = false;
+const resetTodo = () => {
+  todoData.value = {
+    id: '',
+    theDate : '',
+    startTime: {hour: 0, minute: 0},
+    endTime:  {hour: 0, minute: 0},
+    startPoint: 0,
+    endPoint: 0,
+    timeRange: 0,
+    title: '',
+    content: '',
+    complete: false,
+    created: false     
+  }
 }
 </script>
 

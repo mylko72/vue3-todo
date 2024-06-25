@@ -12,6 +12,7 @@
           v-model="title"
           label="제목"
           variant="underlined"
+          ref="inputRef"
         ></v-text-field>
         <v-textarea
           v-model="content"
@@ -42,8 +43,11 @@ const props = defineProps({
   content: String,
   created: Boolean
 });
-const emit = defineEmits(['resetCreated'])
+const emit = defineEmits(['resetTodo'])
 const todoData = inject('todoData');
+const vFocus = {
+  mounted: (el) => el.focus()
+}
 
 const startTime = ref({
   hour: '00',
@@ -76,9 +80,10 @@ const timeWriteRef = ref(null);
 const startTimeRef = ref(null);
 const startTimeRef2 = ref(null);
 const startTimeRef3 = ref(null);
+const inputRef = ref(null);
 
 const resetForm = () => {
-  emit('resetCreated', false);
+  emit('resetTodo', false);
 
   title.value = '';
   content.value = '';
@@ -122,6 +127,7 @@ onMounted(() => {
 
       setTimeout(() => {
         activeClass3.value = true;
+        inputRef.value.focus();
       }, 300);
     }else{
       endTime.value.hour = '00';
@@ -170,7 +176,7 @@ onMounted(() => {
     
     p {
       // transform: translateY(50px);
-      transition: opacity .7s;
+      transition: opacity .3s;
       opacity: .3;
 
       &.active {

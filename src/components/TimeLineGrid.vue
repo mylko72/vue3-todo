@@ -45,21 +45,9 @@ const timeLineGrid = ref({
   currentScollY: 0,
   startScrollY: 0
 });
-const timelineBar = ref([]);
-const timelineData = ref({
-  id: '',
-  theDate : '',
-  startTime: {hour: 0, minute: 0},
-  endTime:  {hour: 0, minute: 0},
-  startPoint: 0,
-  endPoint: 0,
-  timeRange: 0,
-  title: '',
-  content: '',
-  complete: false,
-  created: false
-});
 
+const timelineBar = ref([]);
+const timelineData = ref({...todoData.value});
 
 const gridHeight = computed(() => {
   timeLineGrid.value.oneMinute = props.unit;
