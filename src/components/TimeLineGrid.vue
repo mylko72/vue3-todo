@@ -13,12 +13,12 @@
         </template>
         <template #card>
           <v-card
-            :loading="inProgress"
+            :loading="bar.success"
             class="card-view"
             max-width="544"
             hover
           >
-            <v-card-item v-if="!inProgress">
+            <v-card-item v-if="!bar.success">
               <v-card-title>
                 할 일
               </v-card-title>
@@ -33,7 +33,7 @@
               </v-card-title>
             </v-card-item>
 
-            <v-card-text v-if="!inProgress">
+            <v-card-text v-if="!bar.success">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </v-card-text>
           </v-card>
@@ -46,12 +46,14 @@
 <script setup>
 import { computed, ref, watchEffect } from 'vue';
 import { inject, onMounted } from 'vue';
+import { isLoading, setStatus } from '@/api/todos'
 import { useMouse } from '@/composables/useMouse';
 import TimeLineBar from '@/components/TimeLineBar.vue'
 
 const props = defineProps({
   unit: [String, Number],
   today: String,
+  success: Boolean
 });
 
 const emit = defineEmits([
@@ -75,9 +77,21 @@ const timeLineGrid = ref({
   currentScollY: 0,
   startScrollY: 0
 });
-const inProgress = ref(false);
 const timelineBar = ref([]);
 const timelineData = ref({...todoData.value});
+// const inProgress = computed(() => {
+//   console.log('isLoading', isLoading());
+//   return isLoading();
+// })
+const isProgress = computed({
+  get() {
+    timelineBar.value[timelineBar.value.length-1].success = !props.success
+    return timelineBar.value[timelineBar.value.length-1].success
+  },
+  set(value){
+    setStatus('loading', value);
+  }
+})
 
 const gridHeight = computed(() => {
   timeLineGrid.value.oneMinute = props.unit;
@@ -113,7 +127,7 @@ const createTimelineBar = ($event) => {
     timelineData.value.created = true;
     const cloneData = util.deepCopy(timelineData.value);
     timelineBar.value.push(cloneData);
-    inProgress.value = true;
+    isProgress.value = true;
   }
 
   const newIdx = timelineBar.value.length-1;

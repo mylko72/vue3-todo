@@ -6,11 +6,13 @@
 
   <ToDoTimeSheet 
     @send-time-width="getTimeWidth"
+    :success="isSuccess"
     :unit="selectedView" 
     :date="dateString">
   </ToDoTimeSheet>
 
   <TimeLineWrite
+    @success-todo="successTodo"
     @reset-todo="resetTodo"
     :setWidth="timeLineWidth"    
     v-bind="todoData">
@@ -28,6 +30,7 @@ const todoData = inject('todoData');
 const { dateString } = useClock();
 const selectedView = ref('2px');
 const timeLineWidth = ref(0);
+const isSuccess = ref(false);
 const changeView = (view) => {
   selectedView.value = view;
 }
@@ -48,6 +51,9 @@ const resetTodo = () => {
     complete: false,
     created: false     
   }
+}
+const successTodo = (value) => {
+  isSuccess.value = value;
 }
 </script>
 

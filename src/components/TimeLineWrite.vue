@@ -30,7 +30,7 @@
 
 <script setup>
 import { computed, inject, onMounted, ref, unref } from 'vue';
-import { createTodo } from '@/api/todos'
+import { createTodo, setStatus } from '@/api/todos'
 
 const props = defineProps({
   setWidth: Number,
@@ -43,7 +43,7 @@ const props = defineProps({
   content: String,
   created: Boolean
 });
-const emit = defineEmits(['resetTodo'])
+const emit = defineEmits(['resetTodo', 'successTodo'])
 const todoData = inject('todoData');
 const currentTodo = ref({
   startTime: {
@@ -57,16 +57,6 @@ const currentTodo = ref({
   title: '',
   content: ''
 });
-// const startTime = ref({
-//   hour: '00',
-//   minute: '00'
-// });
-// const endTime = ref({
-//   hour: '00',
-//   minute: '00'
-// });
-// const title = ref('');
-// const content = ref('');
 
 const translateView = computed(() => {
   let result = null;
@@ -105,7 +95,9 @@ const handleCreate = (event) => {
   todoData.value.title = currentTodo.value.title;
   todoData.value.content = currentTodo.value.content;
 
+  // setStatus('loading', false);
   createTodo({...todoData.value});
+  emit('successTodo', true);
   resetForm();
 }
 
@@ -113,6 +105,7 @@ onMounted(() => {
   timeWriteRef.value.addEventListener('transitionend', () => {
     if(props.created){
       activeClass.value = true;
+      emit('successTodo', false);
     }
   }); 
   startTimeRef.value.addEventListener('transitionend', () => {

@@ -4,6 +4,7 @@
       @init-grid="initGrid"
       @show-message="showMessage" 
       @set-pos-message="setPosMessage"
+      :success="props.success"
       :unit="props.unit"
       :today="props.date">
     </TimeLineGrid>
@@ -37,6 +38,10 @@ const props = defineProps({
   date: {
     type: String,
     required: true
+  },
+  success: {
+    type: Boolean,
+    default: false
   }
 });
 
