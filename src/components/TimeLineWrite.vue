@@ -4,16 +4,35 @@
     <div class="txt-selected-time">
       <p :class="{ active: activeClass }" ref="startTimeRef">
         <!-- <span class="time">{{ startTime.hour }}</span> -->
-        <div class="number-rolling" aria-hidden="true">
-          <div class="num n1">&nbsp;</div>
-          <div class="num n2">&nbsp;</div>
+        <div class="number-rolling" :class="{ active: activeRolling[0] }" aria-hidden="true" ref="startHourRef">
+          <div class="num" :class="`n${startHour[0]}`">&nbsp;</div>
+          <div class="num" :class="`n${startHour[1]}`">&nbsp;</div>
         </div>
         <span class="txt">시</span> 
-        <span class="time">{{ startTime.minute }}</span>
+        <!-- <span class="time">{{ currentTodo.startTime.minute }}</span> -->
+        <div class="number-rolling" :class="{ active: activeRolling[1] }" aria-hidden="true">
+          <div class="num" :class="`n${startMinute[0]}`">&nbsp;</div>
+          <div class="num" :class="`n${startMinute[1]}`">&nbsp;</div>
+        </div>
         <span class="txt">분 부터</span>
       </p>
-      <p :class="{ active: activeClass2 }" ref="startTimeRef2"><span class="time">{{ endTime.hour }}</span><span class="txt">시</span> <span class="time">{{ endTime.minute }}</span><span class="txt">분 까지</span></p>
-      <p :class="{ active: activeClass3 }" ref="startTimeRef3"><span class="txt">할 일을 다음과 같이 등록하시겠습니까?</span></p>
+      <p :class="{ active: activeClass2 }" ref="startTimeRef2">
+        <!-- <span class="time">{{ currentTodo.endTime.hour }}</span> -->
+        <div class="number-rolling" :class="{ active: activeRolling[2] }" aria-hidden="true" ref="endHourRef">
+          <div class="num" :class="`n${endHour[0]}`">&nbsp;</div>
+          <div class="num" :class="`n${endHour[1]}`">&nbsp;</div>
+        </div>
+        <span class="txt">시</span>
+        <!-- <span class="time">{{ currentTodo.endTime.minute }}</span> -->
+        <div class="number-rolling" :class="{ active: activeRolling[3] }" aria-hidden="true">
+          <div class="num" :class="`n${endMinute[0]}`">&nbsp;</div>
+          <div class="num" :class="`n${endMinute[1]}`">&nbsp;</div>
+        </div>
+        <span class="txt">분 까지</span>
+      </p>
+      <p :class="{ active: activeClass3 }" ref="startTimeRef3">
+        <span class="txt">할 일을 다음과 같이 등록하시겠습니까?</span>
+      </p>
     </div>
     <v-sheet class="todo-time__form mx-auto mt-10" :class="{ active: activeForm }">
       <v-form @submit.prevent>
@@ -55,16 +74,34 @@ const props = defineProps({
 const emit = defineEmits(['resetTodo', 'successTodo'])
 const todoData = inject('todoData');
 const currentTodo = ref({
-  startTime: {
-    hour: '00',
-    minute: '00'
-  },
-  endTime: {
-    hour: '00',
-    minute: '00'
-  },
   title: '',
   content: ''
+});
+const startHour = computed({
+  get(){
+    let hour = props.startTime.hour;
+    hour = String(hour).split('');
+    return hour;
+  },
+  set(newValue){
+    startHour.value[0] = newValue.split('')[0];
+    startHour.value[1] = newValue.split('')[1];
+  }
+});
+const startMinute = computed(() => {
+  let minute = props.startTime.minute;
+  minute = String(minute).split('');
+  return minute;
+});
+const endHour = computed(() => {
+  let hour = props.endTime.hour;
+  hour = String(hour).split('');
+  return hour;
+});
+const endMinute = computed(() => {
+  let minute = props.endTime.minute;
+  minute = String(minute).split('');
+  return minute;
 });
 
 const translateView = computed(() => {
@@ -81,12 +118,15 @@ const activeClass2 = computed(() => {
   return props.endTime.hour.length > 0 && true;
 });
 const activeClass3 = ref(false);
+const activeRolling = ref([false, false, false, false]);
 const activeForm = ref(false);
 
 const timeWriteRef = ref(null);
 const startTimeRef = ref(null);
 const startTimeRef2 = ref(null);
 const startTimeRef3 = ref(null);
+const startHourRef = ref(null);
+const endHourRef = ref(null);
 const inputRef = ref(null);
 
 const resetForm = () => {
@@ -119,25 +159,26 @@ onMounted(() => {
   }); 
   startTimeRef.value.addEventListener('transitionend', () => {
     if(props.created){
-      currentTodo.value.startTime.hour = props.startTime.hour;
-      currentTodo.value.startTime.minute = props.startTime.minute;
+      activeRolling.value[0] = true;
+      activeRolling.value[1] = true;
     }else{
-      currentTodo.value.startTime.hour = '00'
-      currentTodo.value.startTime.minute = '00'
+      activeRolling.value[0] = false;
+      activeRolling.value[1] = false;
+      startHour.value = '00'
     }
   });
   startTimeRef2.value.addEventListener('transitionend', () => {
-    if(props.created){    
-      currentTodo.value.endTime.hour = props.endTime.hour;
-      currentTodo.value.endTime.minute = props.endTime.minute;
+    if(props.created){
+      activeRolling.value[2] = true;
+      activeRolling.value[3] = true;
 
       setTimeout(() => {
         activeClass3.value = true;
         inputRef.value.focus();
       }, 300);
     }else{
-      currentTodo.value.endTime.hour = '00';
-      currentTodo.value.endTime.minute = '00';
+      activeRolling.value[2] = false;
+      activeRolling.value[3] = false;
     }
   });
   startTimeRef3.value.addEventListener('transitionend', () => {
