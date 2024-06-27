@@ -2,7 +2,16 @@
   <div class="todo-time__write" :class="{opened: props.created}" :style="{ width: props.setWidth + 'px', transform: translateView }" ref="timeWriteRef">
     <h1 class="text-h3">Guest님,</h1>
     <div class="txt-selected-time">
-      <p :class="{ active: activeClass }" ref="startTimeRef"><span class="time">{{ startTime.hour }}</span><span class="txt">시</span> <span class="time">{{ startTime.minute }}</span><span class="txt">분 부터</span></p>
+      <p :class="{ active: activeClass }" ref="startTimeRef">
+        <!-- <span class="time">{{ startTime.hour }}</span> -->
+        <div class="number-rolling" aria-hidden="true">
+          <div class="num n1">&nbsp;</div>
+          <div class="num n2">&nbsp;</div>
+        </div>
+        <span class="txt">시</span> 
+        <span class="time">{{ startTime.minute }}</span>
+        <span class="txt">분 부터</span>
+      </p>
       <p :class="{ active: activeClass2 }" ref="startTimeRef2"><span class="time">{{ endTime.hour }}</span><span class="txt">시</span> <span class="time">{{ endTime.minute }}</span><span class="txt">분 까지</span></p>
       <p :class="{ active: activeClass3 }" ref="startTimeRef3"><span class="txt">할 일을 다음과 같이 등록하시겠습니까?</span></p>
     </div>
@@ -140,7 +149,7 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .todo-time__write {
   position: fixed;
   top: 0;
@@ -165,6 +174,10 @@ onMounted(() => {
     color: $color-primary;
     font-weight: 700;
     line-height: 1.2;
+
+    * {
+      word-wrap: break-word;
+    }
     
     .txt {
       color:#555;
@@ -196,5 +209,34 @@ onMounted(() => {
       opacity: 1;
     }
   }
+
+  .number-rolling {position:relative;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;vertical-align:bottom;word-wrap: break-word;}
+  .number-rolling:before {content:'';display:block;position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+  .number-rolling:after {content:'';display:block;position:absolute;bottom:-0.2rem;left:0;width:100%;height:19%;z-index:1}
+  .number-rolling > div {font-size:inherit;font-weight:700;color:inherit;text-align:center;position:relative;overflow:hidden;}
+  .number-rolling .num {width:1.8rem}
+  .number-rolling .num:before {content:'012345678901234567890';display:block;position:absolute;top:0;left:0;width:100%}
+  .number-rolling .num + .num {margin-left:-0.03rem}
+  .number-rolling .num.n1:before {content:'0123456789012345678901'}
+  .number-rolling .num.n2:before {content:'01234567890123456789012'}
+  .number-rolling .num.n3:before {content:'012345678901234567890123'}
+  .number-rolling .num.n4:before {content:'0123456789012345678901234'}
+  .number-rolling .num.n5:before {content:'01234567890123456789012345'}
+  .number-rolling .num.n6:before {content:'012345678901234567890123456'}
+  .number-rolling .num.n7:before {content:'0123456789012345678901234567'}
+  .number-rolling .num.n8:before {content:'01234567890123456789012345678'}
+  .number-rolling .num.n9:before {content:'012345678901234567890123456789'}
+  .number-rolling.active .num:before {top:0.3rem;-webkit-animation:numRolling 1.5s .2s ease forwords; animation:numRolling 1.5s .2s ease forwards}
+  .number-rolling.active .num + .num:before {-webkit-animation-delay:.3s; animation-delay:.3s}
+
+  @-webkit-keyframes numRolling {
+    0% {-webkit-transform:translateY(0);transform:translateY(0)}
+    100% {-webkit-transform:translateY(calc(-100% + 3.3rem));transform:translateY(calc(-100% + 3.3rem))}
+  }
+  @keyframes numRolling {
+    0% {-webkit-transform:translateY(0);transform:translateY(0)}
+    100% {-webkit-transform:translateY(calc(-100% + 3.3rem));transform:translateY(calc(-100% + 3.3rem))}
+  }
+
 }
 </style>
