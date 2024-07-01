@@ -13,28 +13,30 @@
         </template>
         <template #card>
           <v-card
-            :loading="bar.success"
+            :loading="bar.status === 'pending'"
             class="card-view"
             max-width="544"
             hover
           >
-            <v-card-item v-if="!bar.success">
+            <v-card-item v-if="bar.status === 'success'">
               <v-card-title>
-                할 일
+                {{ bar.todo }}
               </v-card-title>
               <v-card-subtitle>
-                20:43 ~ 22:10
+                {{ bar.startTime.hour }}:{{ bar.startTime.hour }}
+                ~ 
+                {{ bar.endTime.hour }}:{{ bar.endTime.hour }}
               </v-card-subtitle>
             </v-card-item>
 
-            <v-card-item class="in-progress" v-else>
+            <v-card-item class="in-progress" v-else-if="bar.status === 'pending'">
               <v-card-title>
                 등록중...
               </v-card-title>
             </v-card-item>
 
-            <v-card-text v-if="!bar.success">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            <v-card-text v-if="bar.status === 'success'">
+              {{ bar.memo }}
             </v-card-text>
           </v-card>
         </template>
@@ -44,9 +46,9 @@
 </template>
 
 <script setup>
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect, watch } from 'vue';
 import { inject, onMounted } from 'vue';
-import { isLoading, setStatus } from '@/api/todos'
+import { getTodoById } from '@/api/todos'
 import { useMouse } from '@/composables/useMouse';
 import TimeLineBar from '@/components/TimeLineBar.vue'
 
@@ -65,6 +67,7 @@ const emit = defineEmits([
 
 const util = inject('util');
 const todoData = inject('todoData');
+const todoMode = inject('todoMode');
 const { x: absX, y: absY } = useMouse(); 
 const timeLineGridRef = ref(null);
 
@@ -79,20 +82,6 @@ const timeLineGrid = ref({
 });
 const timelineBar = ref([]);
 const timelineData = ref({...todoData.value});
-// const inProgress = computed(() => {
-//   console.log('isLoading', isLoading());
-//   return isLoading();
-// })
-const isProgress = computed({
-  get() {
-    timelineBar.value[timelineBar.value.length-1].success = !props.success
-    return timelineBar.value[timelineBar.value.length-1].success
-  },
-  set(value){
-    setStatus('loading', value);
-  }
-})
-
 const gridHeight = computed(() => {
   timeLineGrid.value.oneMinute = props.unit;
   return parseFloat(timeLineGrid.value.oneMinute) * 5;
@@ -125,9 +114,10 @@ const createTimelineBar = ($event) => {
 
   if(!timelineData.value.created){
     timelineData.value.created = true;
+
     const cloneData = util.deepCopy(timelineData.value);
     timelineBar.value.push(cloneData);
-    isProgress.value = true;
+    todoMode.value = 'pending';
   }
 
   const newIdx = timelineBar.value.length-1;
@@ -205,6 +195,16 @@ const handleEvents = () => {
   });
 }
 
+watch(todoMode, (newMode, oldMode) => {
+  console.log('newMode', newMode);
+  timelineBar.value[timelineBar.value.length-1].status = newMode;
+
+  if(newMode === 'success'){
+    const newTodo = getTodoById(timelineBar.value.length-1);
+    timelineBar.value[timelineBar.value.length-1].todo = newTodo.todo;
+    timelineBar.value[timelineBar.value.length-1].memo = newTodo.memo;
+  }
+});
 watchEffect(getTimeFromPoint);
 
 onMounted(() => {

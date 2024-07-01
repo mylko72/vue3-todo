@@ -10,8 +10,8 @@ export default {
       startPoint: 0,
       endPoint: 0,
       timeRange: 0,
-      title: '',
-      content: '',
+      todo: '',
+      memo: '',
       complete: false,
       created: false    
     });

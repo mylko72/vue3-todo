@@ -9,7 +9,6 @@
           <div class="num" :class="`n${startHour[1]}`">&nbsp;</div>
         </div>
         <span class="txt">시</span> 
-        <!-- <span class="time">{{ currentTodo.startTime.minute }}</span> -->
         <div class="number-rolling" :class="{ active: activeRolling[1] }" aria-hidden="true">
           <div class="num" :class="`n${startMinute[0]}`">&nbsp;</div>
           <div class="num" :class="`n${startMinute[1]}`">&nbsp;</div>
@@ -17,13 +16,11 @@
         <span class="txt">분 부터</span>
       </p>
       <p :class="{ active: activeClass2 }" ref="startTimeRef2">
-        <!-- <span class="time">{{ currentTodo.endTime.hour }}</span> -->
         <div class="number-rolling" :class="{ active: activeRolling[2] }" aria-hidden="true" ref="endHourRef">
           <div class="num" :class="`n${endHour[0]}`">&nbsp;</div>
           <div class="num" :class="`n${endHour[1]}`">&nbsp;</div>
         </div>
         <span class="txt">시</span>
-        <!-- <span class="time">{{ currentTodo.endTime.minute }}</span> -->
         <div class="number-rolling" :class="{ active: activeRolling[3] }" aria-hidden="true">
           <div class="num" :class="`n${endMinute[0]}`">&nbsp;</div>
           <div class="num" :class="`n${endMinute[1]}`">&nbsp;</div>
@@ -37,14 +34,14 @@
     <v-sheet class="todo-time__form mx-auto mt-10" :class="{ active: activeForm }">
       <v-form @submit.prevent>
         <v-text-field
-          v-model="currentTodo.title"
-          label="제목"
+          v-model="currentTodo.todo"
+          label="할일"
           variant="underlined"
           ref="inputRef"
         ></v-text-field>
         <v-textarea
-          v-model="currentTodo.content"
-          label="내용"
+          v-model="currentTodo.memo"
+          label="메모"
           variant="underlined"
         ></v-textarea>
         <v-row justify-sm="center">
@@ -58,7 +55,7 @@
 
 <script setup>
 import { computed, inject, onMounted, ref, unref } from 'vue';
-import { createTodo, setStatus } from '@/api/todos'
+import { createTodo } from '@/api/todos'
 
 const props = defineProps({
   setWidth: Number,
@@ -71,11 +68,12 @@ const props = defineProps({
   content: String,
   created: Boolean
 });
-const emit = defineEmits(['resetTodo', 'successTodo'])
+const emit = defineEmits(['resetTodo', 'resultTodo'])
 const todoData = inject('todoData');
+const todoMode = inject('todoMode');
 const currentTodo = ref({
-  title: '',
-  content: ''
+  todo: '',
+  memo: ''
 });
 const startHour = computed({
   get(){
@@ -88,10 +86,16 @@ const startHour = computed({
     startHour.value[1] = newValue.split('')[1];
   }
 });
-const startMinute = computed(() => {
-  let minute = props.startTime.minute;
-  minute = String(minute).split('');
-  return minute;
+const startMinute = computed({
+  get(){
+    let minute = props.startTime.minute;
+    minute = String(minute).split('');
+    return minute;
+  },
+  set(newValue){
+    startMinute.value[0] = newValue.split('')[0];
+    startMinute.value[1] = newValue.split('')[1];
+  }
 });
 const endHour = computed(() => {
   let hour = props.endTime.hour;
@@ -132,8 +136,8 @@ const inputRef = ref(null);
 const resetForm = () => {
   emit('resetTodo', false);
 
-  currentTodo.value.title = '';
-  currentTodo.value.content = '';
+  currentTodo.value.todo = '';
+  currentTodo.value.memo = '';
   activeClass.value = false;
   activeClass2.value = false;
   activeClass3.value = false;
@@ -141,20 +145,25 @@ const resetForm = () => {
 }
 const handleCreate = (event) => {
   event.stopPropagation();
-  todoData.value.title = currentTodo.value.title;
-  todoData.value.content = currentTodo.value.content;
+  todoData.value.todo = currentTodo.value.todo;
+  todoData.value.memo = currentTodo.value.memo;
 
-  // setStatus('loading', false);
   createTodo({...todoData.value});
-  emit('successTodo', true);
+  todoMode.value = 'success';
+  emit('resultTodo', todoMode.value);
   resetForm();
+}
+
+const handleCancel = (event) => {
+  event.stopPropagation();
+  todoMode.value = 'cancel';
+  emit('resultTodo', todoMode.value);
 }
 
 onMounted(() => {
   timeWriteRef.value.addEventListener('transitionend', () => {
     if(props.created){
       activeClass.value = true;
-      emit('successTodo', false);
     }
   }); 
   startTimeRef.value.addEventListener('transitionend', () => {
@@ -165,6 +174,7 @@ onMounted(() => {
       activeRolling.value[0] = false;
       activeRolling.value[1] = false;
       startHour.value = '00'
+      startMinute.value = '00'
     }
   });
   startTimeRef2.value.addEventListener('transitionend', () => {

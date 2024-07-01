@@ -1,20 +1,11 @@
 const todos = []
 
-const todoStatus = {
-  loading: false,
-  success: false,
-};
-
-export function setStatus(item, value){
-  todoStatus[item] = value;
-}
-
-export function isLoading(){
-  return todoStatus.loading;
-}
-
 export function getTodos() {
 	return todos;
+}
+
+export function getTodoById(id) {
+  return todos[id];
 }
 
 export function createTodo(data) {

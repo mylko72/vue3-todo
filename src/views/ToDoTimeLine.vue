@@ -12,7 +12,7 @@
   </ToDoTimeSheet>
 
   <TimeLineWrite
-    @success-todo="successTodo"
+    @result-todo="resultTodo"
     @reset-todo="resetTodo"
     :setWidth="timeLineWidth"    
     v-bind="todoData">
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, provide, inject } from 'vue';
 import TimeLineDate from '@/components/TimeLineDate.vue';
 import TimeLineWrite from '@/components/TimeLineWrite.vue';
 import ToDoTimeSheet from '@/views/ToDoTimeSheet.vue';
@@ -31,6 +31,10 @@ const { dateString } = useClock();
 const selectedView = ref('2px');
 const timeLineWidth = ref(0);
 const isSuccess = ref(false);
+const messageKey = ref('');
+
+provide('todoMode', messageKey);
+
 const changeView = (view) => {
   selectedView.value = view;
 }
@@ -52,8 +56,8 @@ const resetTodo = () => {
     created: false     
   }
 }
-const successTodo = (value) => {
-  isSuccess.value = value;
+const resultTodo = (value) => {
+  messageKey.value = value;
 }
 </script>
 
