@@ -158,6 +158,7 @@ const handleCancel = (event) => {
   event.stopPropagation();
   todoMode.value = 'cancel';
   emit('resultTodo', todoMode.value);
+  resetForm();
 }
 
 onMounted(() => {

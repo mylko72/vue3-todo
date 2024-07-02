@@ -195,14 +195,19 @@ const handleEvents = () => {
   });
 }
 
+/* 등록모드를 감시하는 로직으로 변경이 감지되면
+ * 생성된 타임라인바의 status 속성에 모드를 넣어준다.
+ */
 watch(todoMode, (newMode, oldMode) => {
   console.log('newMode', newMode);
   timelineBar.value[timelineBar.value.length-1].status = newMode;
-
-  if(newMode === 'success'){
+            
+  if(newMode === 'success'){  // 등록모드가 success인 경우 등록이 완료되어 타임라인바에 할일제목과 내용을 할당한다.
     const newTodo = getTodoById(timelineBar.value.length-1);
     timelineBar.value[timelineBar.value.length-1].todo = newTodo.todo;
     timelineBar.value[timelineBar.value.length-1].memo = newTodo.memo;
+  }else if(newMode === 'cancel'){ // 'cancel'인 경우 등록을 취소하여 타임라인 바에서 제거한다.
+    timelineBar.value.pop();
   }
 });
 watchEffect(getTimeFromPoint);

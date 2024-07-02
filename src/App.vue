@@ -13,7 +13,8 @@ import TheMainContent from '@/layout/TheMainContent.vue'
 </script>
 
 <style lang="scss" scoped>
-.main-container {
+.main-cotainer {
   max-width: 1920px;
+  margin: 0
 }
 </style>
