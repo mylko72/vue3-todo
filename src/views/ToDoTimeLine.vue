@@ -26,6 +26,7 @@ import TimeLineWrite from '@/components/TimeLineWrite.vue';
 import ToDoTimeSheet from '@/views/ToDoTimeSheet.vue';
 import { useClock } from '@/composables/useClock';
 
+const emits = defineEmits(['sendResultTodo']);
 const todoData = inject('todoData');
 const { dateString } = useClock();
 const selectedView = ref('2px');
@@ -58,6 +59,7 @@ const resetTodo = () => {
 }
 const resultTodo = (value) => {
   messageKey.value = value;
+  emits('sendResultTodo', value);
 }
 </script>
 

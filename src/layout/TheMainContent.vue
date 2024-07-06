@@ -2,10 +2,10 @@
   <div>
     <v-row no-gutters cols="">
       <v-col cols="6">
-        <ToDoTimeLine></ToDoTimeLine>
+        <ToDoTimeLine @send-result-todo="getResultTodo"></ToDoTimeLine>
       </v-col>  
       <v-col cols="6">
-        <ToDoTimeListVue class="todo-time__list"></ToDoTimeListVue>
+        <ToDoTimeList :mode="resultMode" class="todo-time__list"></ToDoTimeList>
       </v-col>
     </v-row>
   </div>
@@ -13,7 +13,14 @@
 
 <script setup>
 import ToDoTimeLine from '@/views/ToDoTimeLine.vue'
-import ToDoTimeListVue from '@/views/ToDoTimeList.vue';
+import ToDoTimeList from '@/views/ToDoTimeList.vue';
+import { ref } from 'vue';
+
+const resultMode = ref('');
+
+const getResultTodo = (value) => {
+  resultMode.value = value;
+}
 
 </script>
 

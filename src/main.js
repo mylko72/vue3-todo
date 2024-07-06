@@ -11,5 +11,6 @@ const app = createApp(App)
 app.use(vuetify)
 app.use(util);
 app.use(todoData);
+// app.provide('todoMode', '');
 
 app.mount('#app');
