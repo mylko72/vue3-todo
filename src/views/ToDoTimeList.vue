@@ -2,69 +2,70 @@
   <v-sheet>
     <h1 class="text-h4 text-center">오늘의 할일 목록</h1>
 
-    <v-timeline v-if="todoLists.length" class="time-lists" align="start" side="end">
-      <v-timeline-item
-        dot-color="pink"
-        size="small"
-        v-for="todo in todoLists" key="todo.id"
-      >
-        <div class="d-flex">
-          <strong class="me-4">
-            {{ todo.startTime.hour }}:{{ todo.startTime.hour }}
-                ~ 
-            {{ todo.endTime.hour }}:{{ todo.endTime.hour }}
-          </strong>
-          <div>
-            <strong>{{ todo.todo }}</strong>
-            <div class="text-caption">
-              {{ todo.memo }}
+    <div v-if="todoLists.length">
+      <v-timeline class="time-lists" align="start" side="end">
+        <v-timeline-item
+          v-for="todoList in todoLists"
+          dot-color="pink"
+          size="small"
+          :key="todoList.id"
+        >
+          <div class="d-flex">
+            <strong class="me-4">
+              {{ todoList.startTime.hour }}:{{ todoList.startTime.hour }}~{{ todoList.endTime.hour }}:{{ todoList.endTime.hour }}
+            </strong>
+            <div>
+              <strong>{{ todoList.todo }}</strong>
+              <div class="text-caption">
+                {{ todoList.memo }}
+              </div>
             </div>
           </div>
-        </div>
-      </v-timeline-item>
+        </v-timeline-item>
 
-      <!-- <v-timeline-item
-        dot-color="teal-lighten-3"
-        size="small"
-      >
-        <div class="d-flex">
-          <strong class="me-4">3-4pm</strong>
-          <div>
-            <strong>Design Stand Up</strong>
-            <div class="text-caption mb-2">
-              Hangouts
+        <v-timeline-item
+          dot-color="teal-lighten-3"
+          size="small"
+        >
+          <div class="d-flex">
+            <strong class="me-4">3-4pm</strong>
+            <div>
+              <strong>Design Stand Up</strong>
+              <div class="text-caption mb-2">
+                Hangouts
+              </div>
             </div>
           </div>
-        </div>
-      </v-timeline-item>
+        </v-timeline-item>
 
-      <v-timeline-item
-        dot-color="pink"
-        size="small"
-      >
-        <div class="d-flex">
-          <strong class="me-4">12pm</strong>
-          <div>
-            <strong>Lunch break</strong>
-          </div>
-        </div>
-      </v-timeline-item>
-
-      <v-timeline-item
-        dot-color="teal-lighten-3"
-        size="small"
-      >
-        <div class="d-flex">
-          <strong class="me-4">9-11am</strong>
-          <div>
-            <strong>Finish Home Screen</strong>
-            <div class="text-caption">
-              Web App
+        <v-timeline-item
+          dot-color="pink"
+          size="small"
+        >
+          <div class="d-flex">
+            <strong class="me-4">12pm</strong>
+            <div>
+              <strong>Lunch break</strong>
             </div>
           </div>
-        </div>
-      </v-timeline-item> -->
-    </v-timeline>
+        </v-timeline-item>
+
+        <v-timeline-item
+          dot-color="teal-lighten-3"
+          size="small"
+        >
+          <div class="d-flex">
+            <strong class="me-4">9-11am</strong>
+            <div>
+              <strong>Finish Home Screen</strong>
+              <div class="text-caption">
+                Web App
+              </div>
+            </div>
+          </div>
+        </v-timeline-item>
+      </v-timeline>
+    </div>
     <div v-else>
       등록된 할일 목록이 없습니다.
     </div>
@@ -86,11 +87,6 @@ const todoLists = computed(() => {
   }else{
     return [];
   }
-});
-
-watch(props.mode, (newMode, oldMode) => {
-  console.log('newMode2', newMode);
-
 });
 
 </script>
